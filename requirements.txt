@@ -1,0 +1,9 @@
+html5lib==0.9999999
+isodate==0.5.4
+keepalive==0.5
+pyparsing==2.1.0
+python-midi==0.2.4
+rdflib==4.2.1
+six==1.10.0
+SPARQLWrapper==1.7.6
+wheel==0.24.0
