@@ -20,12 +20,12 @@ g.add((pattern, RDF.type, mid.Pattern))
 pattern_midi.make_ticks_abs()
 
 for n_track in range(len(pattern_midi)):
-    track = m['track' + str(n_track)]
+    track = m['track' + str(n_track).zfill(2)] #So we can order by URI later
     g.add((track, RDF.type, mid.Track))
     g.add((pattern, mid.hasTrack, track))
     for n_event in range(len(pattern_midi[n_track])):
         event_midi = pattern_midi[n_track][n_event]
-        event = m['track' + str(n_track) + '/event'+ str(n_event)]
+        event = m['track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4)]
         g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
         g.add((track, mid.hasEvent, event))
         # Save the 'tick' slot
