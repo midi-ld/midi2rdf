@@ -64,4 +64,5 @@ target/
 .DS_Store
 *.mid
 *.json
+*.ttl
 include/
