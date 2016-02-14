@@ -2,12 +2,17 @@ import midi
 import rdflib
 from rdflib import Namespace, Graph, RDF, URIRef, Literal
 import ast
+import sys
+
+if len(sys.argv) != 3:
+    print "Usage: {0} <rdf input file> <midi output file>".format(sys.argv[0])
+    exit(2)
 
 mid = Namespace("http://example.org/midi/")
 
 # Read the input RDF file
 g = Graph()
-g.parse("ghostbusters.ttl", format="turtle")
+g.parse(sys.argv[1], format="turtle")
 
 # Initialize the MIDI file
 pattern = midi.Pattern(resolution=96)
@@ -188,4 +193,4 @@ for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
         else:
             print "BIG ERROR, EVENT {0} TYPE UNMANAGED".format(event_type)
 
-midi.write_midifile("ghostbusters_roundtrip.mid", pattern)
+midi.write_midifile(sys.argv[2], pattern)

@@ -1,8 +1,13 @@
 import midi
 import rdflib
 from rdflib import Namespace, Graph, RDF, URIRef, Literal
+import sys
 
-filename = "ghostbusters.mid"
+if len(sys.argv) != 3:
+    print "Usage: {0} <midi input file> <rdf output file>".format(sys.argv[0])
+    exit(2)
+
+filename = sys.argv[1]
 
 # Read the input MIDI file
 pattern_midi = midi.read_midifile(filename)
@@ -38,6 +43,9 @@ for n_track in range(len(pattern_midi)):
             g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
 
 g.bind('mid', mid)
-print g.serialize(format='turtle')
+
+outfile = open(sys.argv[2], 'w')
+outfile.write(g.serialize(format='turtle'))
+outfile.close()
 
 exit(0)
