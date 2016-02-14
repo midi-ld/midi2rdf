@@ -1,2 +1,3 @@
-# midi-rdf
-Playground for data conversions between RDF and MIDI
+# midi2rdf
+
+Converters for MIDI to RDF and backwards. Lossless. For the lulz.
