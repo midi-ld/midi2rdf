@@ -43,7 +43,7 @@ while True:
             elif event[0][0] == 128:
                 status = "NoteOffEvent"
             else:
-                print "BIG ERROR, unexpected event type"
+                print "BIG ERROR, unexpected event type {}".format(event[0][0])
             pitch = event[0][1]
             velocity = event[0][2]
             channel = event[0][3]
