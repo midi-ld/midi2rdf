@@ -1,7 +1,10 @@
+#!/usr/bin/python
+
 import midi
 import rdflib
 from rdflib import Namespace, Graph, RDF, URIRef, Literal
 import sys
+from werkzeug.urls import url_fix
 
 if len(sys.argv) != 3:
     print "Usage: {0} <midi input file> <rdf output file>".format(sys.argv[0])
@@ -13,7 +16,7 @@ filename = sys.argv[1]
 pattern_midi = midi.read_midifile(filename)
 
 mid = Namespace("http://example.org/midi/")
-m = Namespace("http://example.org/midi/ghostbusters/")
+m = Namespace(url_fix("http://example.org/midi/" + "".join(filename.split('.')[0:-1])))
 
 # Create the graph
 g = Graph()
@@ -25,7 +28,7 @@ g.add((pattern, RDF.type, mid.Pattern))
 # pattern_midi.make_ticks_abs()
 
 for n_track in range(len(pattern_midi)):
-    track = m['track' + str(n_track).zfill(2)] #So we can order by URI later
+    track = m['track' + str(n_track).zfill(2)] #So we can order by URI later -- UGLY PATCH
     g.add((track, RDF.type, mid.Track))
     g.add((pattern, mid.hasTrack, track))
     for n_event in range(len(pattern_midi[n_track])):

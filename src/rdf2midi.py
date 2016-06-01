@@ -190,6 +190,42 @@ for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
                 text = str(p)
             tme = midi.TextMetaEvent(tick=tick, channel=channel, text=text)
             track.append(tme)
+        elif event_type == mid.SmpteOffsetEvent:
+            tick = None
+            data = None
+            for p in g.objects(z, mid.tick):
+                tick = int(p)
+            for p in g.objects(z, mid.data):
+                data = ast.literal_eval(p)
+            sme = midi.SmpteOffsetEvent(tick=tick, data=data)
+        elif event_type == mid.ChannelPrefixEvent:
+            tick = None
+            data = None
+            for p in g.objects(z, mid.tick):
+                tick = int(p)
+            for p in g.objects(z, mid.data):
+                data = ast.literal_eval(p)
+            cpe = midi.ChannelPrefixEvent(tick=tick, data=data)
+        elif event_type == mid.SysexEvent:
+            tick = None
+            channel = None
+            for p in g.objects(z, mid.tick):
+                tick = int(p)
+            for p in g.objects(z, mid.channel):
+                channel = int(p)
+            se = midi.SysexEvent(tick=tick, channel=channel)
+        elif event_type == mid.PitchWheelEvent:
+            tick = None
+            channel = None
+            pitch = None
+            for p in g.objects(z, mid.tick):
+                tick = int(p)
+            for p in g.objects(z, mid.channel):
+                channel = int(p)
+            for p in g.objects(z, mid.pitch):
+                pitch = int(p)
+            pwe = midi.PitchWheelEvent(tick=tick, channel=channel, pitch=pitch)
+
         else:
             print "BIG ERROR, EVENT {0} TYPE UNMANAGED".format(event_type)
 
