@@ -23,6 +23,8 @@ g = Graph()
 
 pattern = mid[filename.split('.')[0]]
 g.add((pattern, RDF.type, mid.Pattern))
+g.add((pattern, mid.resolution, Literal(pattern_midi.resolution)))
+g.add((pattern, mid['format'], Literal(pattern_midi.format)))
 
 # Since we won't mess with RDF statement order, we'll have absolute ticks
 # pattern_midi.make_ticks_abs()

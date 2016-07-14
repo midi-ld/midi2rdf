@@ -15,7 +15,14 @@ g = Graph()
 g.parse(sys.argv[1], format="turtle")
 
 # Initialize the MIDI file
-pattern = midi.Pattern(resolution=96)
+p_resolution = 96
+p_format = 1
+for s,p,o in g.triples((None, mid.resolution, None)):
+    p_resolution = int(o)
+for s,p,o in g.triples((None, mid['format'], None)):
+    p_format = int(o)
+    
+pattern = midi.Pattern(resolution=p_resolution, format=p_format)
 
 # Retrieve the tracks
 for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
