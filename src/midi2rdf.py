@@ -2,9 +2,10 @@
 
 import midi
 import rdflib
-from rdflib import Namespace, Graph, RDF, URIRef, Literal
+from rdflib import Namespace, ConjunctiveGraph, RDF, URIRef, Literal
 import sys
 from werkzeug.urls import url_fix
+import hashlib
 
 if len(sys.argv) != 3:
     print "Usage: {0} <midi input file> <rdf output file>".format(sys.argv[0])
@@ -15,18 +16,29 @@ filename = sys.argv[1]
 # Read the input MIDI file
 pattern_midi = midi.read_midifile(filename)
 
+# Get MD5 to identify the file
+md5_id = hashlib.md5(open(filename, 'rb').read()).hexdigest()
+
 mid_uri = URIRef("http://example.org/midi/")
-m_uri = URIRef(url_fix("http://example.org/midi/" + "".join(filename.split('.')[0:-1])))
+prov_uri = URIRef("http://www.w3.org/ns/prov#")
+# m_uri = URIRef(url_fix("http://example.org/midi/" + "".join(filename.split('.')[0:-1])))
+m_uri = URIRef(url_fix("http://example.org/midi/" + str(md5_id) + "/"))
 mid = Namespace(mid_uri)
+prov = Namespace(prov_uri)
 m = Namespace(m_uri)
 
 # Create the graph
-g = Graph(identifier=m_uri)
+g = ConjunctiveGraph(identifier=m_uri)
 
-pattern = mid[filename.split('.')[0]]
+# pattern = mid[filename.split('.')[0]]
+pattern = mid[md5_id]
 g.add((pattern, RDF.type, mid.Pattern))
 g.add((pattern, mid.resolution, Literal(pattern_midi.resolution)))
 g.add((pattern, mid['format'], Literal(pattern_midi.format)))
+
+# Publication info
+# TODO: replace with nanopubs
+g.add((pattern, prov.wasDerivedFrom, Literal(filename)))
 
 # Since we won't mess with RDF statement order, we'll have absolute ticks
 # pattern_midi.make_ticks_abs()
@@ -50,6 +62,7 @@ for n_track in range(len(pattern_midi)):
             g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
 
 g.bind('mid', mid)
+g.bind('prov', prov)
 
 outfile = open(sys.argv[2], 'w')
 outfile.write(g.serialize(format='nquads'))
