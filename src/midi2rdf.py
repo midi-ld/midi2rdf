@@ -15,11 +15,13 @@ filename = sys.argv[1]
 # Read the input MIDI file
 pattern_midi = midi.read_midifile(filename)
 
-mid = Namespace("http://example.org/midi/")
-m = Namespace(url_fix("http://example.org/midi/" + "".join(filename.split('.')[0:-1])))
+mid_uri = URIRef("http://example.org/midi/")
+m_uri = URIRef(url_fix("http://example.org/midi/" + "".join(filename.split('.')[0:-1])))
+mid = Namespace(mid_uri)
+m = Namespace(m_uri)
 
 # Create the graph
-g = Graph()
+g = Graph(identifier=m_uri)
 
 pattern = mid[filename.split('.')[0]]
 g.add((pattern, RDF.type, mid.Pattern))
@@ -50,7 +52,7 @@ for n_track in range(len(pattern_midi)):
 g.bind('mid', mid)
 
 outfile = open(sys.argv[2], 'w')
-outfile.write(g.serialize(format='turtle'))
+outfile.write(g.serialize(format='nquads'))
 outfile.close()
 
 exit(0)
