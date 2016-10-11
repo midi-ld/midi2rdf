@@ -65,7 +65,7 @@ g.bind('mid', mid)
 g.bind('prov', prov)
 
 outfile = open(sys.argv[2], 'w')
-outfile.write(g.serialize(format='nquads'))
+outfile.write(g.serialize(format='turtle'))
 outfile.close()
 
 exit(0)
