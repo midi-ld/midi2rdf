@@ -75,7 +75,7 @@ g.bind('mid', mid)
 g.bind('prov', prov)
 
 outfile = gzip.open(sys.argv[2] + '.gz', 'wb')
-outfile.write(g.serialize(format='turtle'))
+outfile.write(g.serialize(format='nquads'))
 outfile.close()
 
 exit(0)
