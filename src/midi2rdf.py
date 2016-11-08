@@ -63,7 +63,8 @@ for n_track in range(len(pattern_midi)):
             # Prcoess ASCII conversion of text events
             if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent'] and slot == 'data':
                 text_data_literal = getattr(event_midi, slot)
-                text_value = ''.join(chr(i) for i in text_data_literal)
+                text_value = unicode(''.join(chr(i) for i in text_data_literal), errors='replace')
+                # print text_value
                 # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
                 g.add((event, RDFS.label, Literal(text_value)))
             else:
