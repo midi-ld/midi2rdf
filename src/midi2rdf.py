@@ -2,10 +2,11 @@
 
 import midi
 import rdflib
-from rdflib import Namespace, ConjunctiveGraph, RDF, URIRef, Literal
+from rdflib import Namespace, ConjunctiveGraph, RDF, RDFS, URIRef, Literal
 import sys
 from werkzeug.urls import url_fix
 import hashlib
+import ast
 
 if len(sys.argv) != 3:
     print "Usage: {0} <midi input file> <rdf output file>".format(sys.argv[0])
@@ -59,7 +60,14 @@ for n_track in range(len(pattern_midi)):
             g.add((event, mid.channel, Literal(event_midi.channel)))
         # Save any other slots the event may have
         for slot in event_midi.__slots__:
-            g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
+            # Prcoess ASCII conversion of text events
+            if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent'] and slot == 'data':
+                text_data_literal = getattr(event_midi, slot)
+                text_value = ''.join(chr(i) for i in text_data_literal)
+                # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
+                g.add((event, RDFS.label, Literal(text_value)))
+            else:
+                g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
 
 g.bind('mid', mid)
 g.bind('prov', prov)

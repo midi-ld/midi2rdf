@@ -1,6 +1,6 @@
 import midi
 import rdflib
-from rdflib import Namespace, Graph, RDF, URIRef, Literal
+from rdflib import Namespace, Graph, RDF, RDFS, URIRef, Literal
 import ast
 import sys
 
@@ -21,7 +21,7 @@ for s,p,o in g.triples((None, mid.resolution, None)):
     p_resolution = int(o)
 for s,p,o in g.triples((None, mid['format'], None)):
     p_format = int(o)
-    
+
 pattern = midi.Pattern(resolution=p_resolution, format=p_format)
 
 # Retrieve the tracks
@@ -128,11 +128,15 @@ for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
                 tick = int(p)
             for p in g.objects(z, mid.channel):
                 channel = int(p)
-            for p in g.objects(z, mid.text):
+            # for p in g.objects(z, mid.text):
+            #     text = str(p)
+            for p in g.objects(z, RDFS.label):
                 text = str(p)
-            for p in g.objects(z, mid.data):
-                data = ast.literal_eval(p)
+                data = [ord(t) for t in text]
+            # for p in g.objects(z, mid.data):
+            #     data = ast.literal_eval(p)
             tne = midi.TrackNameEvent(tick=tick, channel=channel, text=text, data=data)
+            # tne = midi.TrackNameEvent(tick=tick, channel=channel, text=text)
             track.append(tne)
         elif event_type == mid.SetTempoEvent:
             tick = None
@@ -193,7 +197,9 @@ for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
                 tick = int(p)
             for p in g.objects(z, mid.channel):
                 channel = int(p)
-            for p in g.objects(z, mid.text):
+            # for p in g.objects(z, mid.text):
+            #     text = str(p)
+            for p in g.objects(z, RDFS.label):
                 text = str(p)
             tme = midi.TextMetaEvent(tick=tick, channel=channel, text=text)
             track.append(tme)
