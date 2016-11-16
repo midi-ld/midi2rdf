@@ -42,8 +42,8 @@ for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
                 channel = int(p)
             for p in g.objects(z, mid.velocity):
                 velocity = int(p)
-            for p in g.objects(z, mid.pitch):
-                pitch = int(p)
+            for p in g.objects(z, mid.note):
+                pitch = int(p.split('/')[-1])
             on = midi.NoteOnEvent(tick=tick, channel=channel, velocity=velocity, pitch=pitch)
             track.append(on)
         elif event_type == mid.NoteOffEvent:
@@ -55,7 +55,7 @@ for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
             for p in g.objects(z, mid.channel):
                 channel = int(p)
             for p in g.objects(z, mid.pitch):
-                pitch = int(p)
+                pitch = int(p.split('/')[-1])
             off = midi.NoteOffEvent(tick=tick, channel=channel, pitch=pitch)
             track.append(off)
         elif event_type == mid.EndOfTrackEvent:
@@ -102,8 +102,8 @@ for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
                 tick = int(p)
             for p in g.objects(z, mid.channel):
                 channel = int(p)
-            for p in g.objects(z, mid.value):
-                value = int(p)
+            for p in g.objects(z, mid.program):
+                value = int(p.split('/')[-1])
             pce = midi.ProgramChangeEvent(tick=tick, channel=channel, value=value)
             track.append(pce)
         elif event_type == mid.SequencerSpecificEvent:
