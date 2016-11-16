@@ -8,6 +8,7 @@ from werkzeug.urls import url_fix
 import hashlib
 import ast
 import gzip
+import unicodecsv
 
 if len(sys.argv) != 3:
     print "Usage: {0} <midi input file> <rdf output file>".format(sys.argv[0])
@@ -65,6 +66,12 @@ for n_track in range(len(pattern_midi)):
             if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent'] and slot == 'data':
                 text_data_literal = getattr(event_midi, slot)
                 text_value = unicode(''.join(chr(i) for i in text_data_literal), errors='replace')
+		# Textfile metadata -- 
+		textfile = open('midi-text.csv', 'a')
+		writer = unicodecsv.writer(textfile, encoding='utf-8')
+		writer.writerow( (filename, type(event_midi).__name__, n_track, n_event, event_midi.tick, text_value) )
+		textfile.close()		
+
                 # print text_value
                 # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
                 g.add((event, RDFS.label, Literal(text_value)))
