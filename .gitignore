@@ -66,3 +66,7 @@ target/
 .DS_Store
 *.json
 include/
+
+# virtualenv
+bin/
+local/
