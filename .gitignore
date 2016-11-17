@@ -70,3 +70,4 @@ include/
 # virtualenv
 bin/
 local/
+share/
