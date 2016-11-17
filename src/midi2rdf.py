@@ -65,7 +65,7 @@ for n_track in range(len(pattern_midi)):
         # Save any other slots the event may have
         for slot in event_midi.__slots__:
             # Prcoess ASCII conversion of text events
-            if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent'] and slot == 'data':
+            if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent', 'LyricsEvent'] and slot == 'data':
                 text_data_literal = getattr(event_midi, slot)
                 text_value = unicode(''.join(chr(i) for i in text_data_literal), errors='replace')
                 # print text_value

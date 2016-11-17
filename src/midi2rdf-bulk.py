@@ -24,10 +24,14 @@ md5_id = hashlib.md5(open(filename, 'rb').read()).hexdigest()
 
 mid_uri = URIRef("http://example.org/midi/")
 prov_uri = URIRef("http://www.w3.org/ns/prov#")
+mid_note_uri = URIRef("http://example.org/midi/notes/")
+mid_prog_uri = URIRef("http://example.org/midi/programs/")
 # m_uri = URIRef(url_fix("http://example.org/midi/" + "".join(filename.split('.')[0:-1])))
 m_uri = URIRef(url_fix("http://example.org/midi/" + str(md5_id) + "/"))
 mid = Namespace(mid_uri)
 prov = Namespace(prov_uri)
+mid_note = Namespace(mid_note_uri)
+mid_prog = Namespace(mid_prog_uri)
 m = Namespace(m_uri)
 
 # Create the graph
@@ -63,7 +67,7 @@ for n_track in range(len(pattern_midi)):
         # Save any other slots the event may have
         for slot in event_midi.__slots__:
             # Prcoess ASCII conversion of text events
-            if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent'] and slot == 'data':
+            if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent', 'LyricsEvent'] and slot == 'data':
                 text_data_literal = getattr(event_midi, slot)
                 text_value = unicode(''.join(chr(i) for i in text_data_literal), errors='replace')
 		# Textfile metadata -- 
@@ -75,6 +79,13 @@ for n_track in range(len(pattern_midi)):
                 # print text_value
                 # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
                 g.add((event, RDFS.label, Literal(text_value)))
+            elif type(event_midi).__name__ in ['NoteOnEvent', 'NoteOffEvent'] and slot == 'pitch':
+                pitch = str(getattr(event_midi, slot))
+                g.add((event, mid['note'], mid_note[pitch]))
+            elif type(event_midi).__name__ in ['ProgramChangeEvent'] and slot == 'value':
+                program = str(getattr(event_midi, slot))
+                g.add((event, mid['program'], mid_prog[program]))
+
             else:
                 g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
 
