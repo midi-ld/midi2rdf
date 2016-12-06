@@ -50,6 +50,9 @@ g.add((pattern, prov.wasDerivedFrom, Literal(filename)))
 # Since we won't mess with RDF statement order, we'll have absolute ticks
 # pattern_midi.make_ticks_abs()
 
+# We'll append the lyrics in this label
+lyrics_label = ""
+
 for n_track in range(len(pattern_midi)):
     track = m['track' + str(n_track).zfill(2)] #So we can order by URI later -- UGLY PATCH
     g.add((track, RDF.type, mid.Track))
@@ -67,7 +70,7 @@ for n_track in range(len(pattern_midi)):
         # Save any other slots the event may have
         for slot in event_midi.__slots__:
             # Prcoess ASCII conversion of text events
-            if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent', 'LyricsEvent'] and slot == 'data':
+            if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent', 'LyricsEvent', 'CopyrightMetaEvent', 'MarkerEvent'] and slot == 'data':
                 text_data_literal = getattr(event_midi, slot)
                 text_value = unicode(''.join(chr(i) for i in text_data_literal), errors='replace')
 		# Textfile metadata -- 
@@ -79,6 +82,13 @@ for n_track in range(len(pattern_midi)):
                 # print text_value
                 # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
                 g.add((event, RDFS.label, Literal(text_value)))
+		if type(event_midi).__name__ == 'LyricsEvent':
+			lyrics_label += text_value
+            elif slot == 'data':
+                unknownsfile = open('unknown-types.csv', 'a')
+                writer = unicodecsv.writer(unknownsfile, encoding='utf-8')
+                writer.writerow( (type(event_midi).__name__, getattr(event_midi, slot)) )
+                unknownsfile.close()
             elif type(event_midi).__name__ in ['NoteOnEvent', 'NoteOffEvent'] and slot == 'pitch':
                 pitch = str(getattr(event_midi, slot))
                 g.add((event, mid['note'], mid_note[pitch]))
@@ -89,7 +99,13 @@ for n_track in range(len(pattern_midi)):
             else:
                 g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
 
+# Add the global lyrics link, if lyrics not empty
+if lyrics_label:
+	g.add((pattern, mid['lyrics'], Literal(lyrics_label)))
+
 g.bind('mid', mid)
+g.bind('mid-note', mid_note)
+g.bind('mid-prog', mid_prog)
 g.bind('prov', prov)
 
 outfile = gzip.open(sys.argv[2] + '.gz', 'wb')
