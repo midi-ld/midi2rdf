@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, redirect, url_for, render_template, flash, send_from_directory, Response
 from werkzeug.utils import secure_filename
 from midi2rdf import midi2rdf
-from subprocess import call
+from subprocess import Popen
 
 UPLOAD_FOLDER = '/tmp/'
 VIRTUOSO_LOAD = '/scratch/amp/midi/virtuoso-load/'
@@ -44,12 +44,12 @@ def upload_file():
             dump = midi2rdf(local_filename)
             # If user accepts, we load the dump in the triplestore
             if request.form.get("cloud"):
-                with open(VIRTUOSO_LOAD + filename + '.nq') as rdffile:
+                with open(VIRTUOSO_LOAD + filename + '.nq', 'w') as rdffile:
                     rdffile.write(dump)
-                call(['/usr/local/virtuoso-opensource/bin/isql 1112 < virtuoso_load.sql'])
+		Popen('/usr/local/virtuoso-opensource/bin/isql 1112 < /home/amp/src/midi2rdf-current/src/virtuoso-load.sql', shell=True)
             return Response(dump, mimetype="application/n-quads", headers={"Content-disposition": "attachment; filename={}".format(filename + '.nq')})
             # return redirect(url_for('uploaded_file', filename=filename))
     return redirect('/')
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=8092, debug=True)
