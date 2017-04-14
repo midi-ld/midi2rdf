@@ -8,8 +8,6 @@ from werkzeug.urls import url_fix
 import hashlib
 import ast
 
-
-
 def midi2rdf(filename):
     """
     Returns a text/turtle dump of the input MIDI filename
@@ -95,21 +93,20 @@ def midi2rdf(filename):
     g.bind('mid-prog', mid_prog)
     g.bind('prov', prov)
 
-    return g.serialize(format='turtle')
+    return g.serialize(format='nquads')
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print "Usage: {0} <midi input file> [<rdf output file>]".format(sys.argv[0])
         exit(2)
 
-filename = sys.argv[1]
-dump = midi2rdf(filename)
+    filename = sys.argv[1]
+    dump = midi2rdf(filename)
 
-if len(sys.argv) > 2:
-    outfile = open(sys.argv[2], 'w')
-    outfile.write(g.serialize(format='turtle'))
-    outfile.close()
-else:
-    print dump
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], 'w') as outfile:
+            outfile.write(dump)
+    else:
+        print dump
 
-exit(0)
+    exit(0)
