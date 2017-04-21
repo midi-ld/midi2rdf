@@ -7,6 +7,7 @@ import sys
 from werkzeug.urls import url_fix
 import hashlib
 import ast
+import gzip
 
 def midi2rdf(filename):
     """
@@ -19,12 +20,11 @@ def midi2rdf(filename):
     # Get MD5 to identify the file
     md5_id = hashlib.md5(open(filename, 'rb').read()).hexdigest()
 
-    mid_uri = URIRef("http://example.org/midi/")
+    mid_uri = URIRef("http://purl.org/midi-ld/midi#")
     prov_uri = URIRef("http://www.w3.org/ns/prov#")
-    mid_note_uri = URIRef("http://example.org/midi/notes/")
-    mid_prog_uri = URIRef("http://example.org/midi/programs/")
-    # m_uri = URIRef(url_fix("http://example.org/midi/" + "".join(filename.split('.')[0:-1])))
-    m_uri = URIRef(url_fix("http://example.org/midi/" + str(md5_id) + "/"))
+    mid_note_uri = URIRef("http://purl.org/midi-ld/notes/")
+    mid_prog_uri = URIRef("http://purl.org/midi-ld/programs/")
+    m_uri = URIRef(url_fix("http://purl.org/midi-ld/patterns/" + str(md5_id) + "/"))
     mid = Namespace(mid_uri)
     prov = Namespace(prov_uri)
     mid_note = Namespace(mid_note_uri)
@@ -97,15 +97,19 @@ def midi2rdf(filename):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "Usage: {0} <midi input file> [<rdf output file>]".format(sys.argv[0])
+        print "Usage: {0} <midi input file> [<rdf output file> [--gz]]".format(sys.argv[0])
         exit(2)
 
     filename = sys.argv[1]
     dump = midi2rdf(filename)
 
     if len(sys.argv) > 2:
-        with open(sys.argv[2], 'w') as outfile:
-            outfile.write(dump)
+        if '--gz' in sys.argv:
+            with gzip.open(sys.argv[2], 'wb') as outfile:
+                outfile.write(dump)
+        else:
+            with open(sys.argv[2], 'w') as outfile:
+                outfile.write(dump)
     else:
         print dump
 
