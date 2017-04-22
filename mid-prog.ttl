@@ -1,0 +1,538 @@
+@prefix mid: <http://purl.org/midi-ld/midi#> .
+@prefix mid-prog: <http://purl.org/midi-ld/programs/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# ---------------------------------------------------------
+# Programs (General MIDI instruments)
+# Generated from https://en.wikipedia.org/wiki/General_MIDI
+# ---------------------------------------------------------
+
+mid-prog:0 a mid:Program ;
+    rdfs:label "Acoustic Grand Piano" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Grand_piano> .
+
+mid-prog:1 a mid:Program ;
+    rdfs:label "Bright Acoustic Piano" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Piano> .
+
+mid-prog:2 a mid:Program ;
+    rdfs:label "Electric Grand Piano" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Electric_grand_piano> .
+
+mid-prog:3 a mid:Program ;
+    rdfs:label "Honky-tonk Piano" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Tack_piano> .
+
+mid-prog:4 a mid:Program ;
+    rdfs:label "Electric Piano 1" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Rhodes_piano> .
+
+mid-prog:5 a mid:Program ;
+    rdfs:label "Electric Piano 2" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Electric_piano> .
+
+mid-prog:6 a mid:Program ;
+    rdfs:label "Harpsichord" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Harpsichord> .
+
+mid-prog:7 a mid:Program ;
+    rdfs:label "Clavinet" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Clavinet> .
+
+mid-prog:8 a mid:Program ;
+    rdfs:label "Celesta" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Celesta> .
+
+mid-prog:9 a mid:Program ;
+    rdfs:label "Glockenspiel" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Glockenspiel> .
+
+mid-prog:10 a mid:Program ;
+    rdfs:label "Music Box" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Musical_box> .
+
+mid-prog:11 a mid:Program ;
+    rdfs:label "Vibraphone" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Vibraphone> .
+
+mid-prog:12 a mid:Program ;
+    rdfs:label "Marimba" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Marimba> .
+
+mid-prog:13 a mid:Program ;
+    rdfs:label "Xylophone" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Xylophone> .
+
+mid-prog:14 a mid:Program ;
+    rdfs:label "Tubular Bells" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Tubular_bell> .
+
+mid-prog:15 a mid:Program ;
+    rdfs:label "Dulcimer" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Hammered_dulcimer> .
+
+mid-prog:16 a mid:Program ;
+    rdfs:label "Drawbar Organ" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Hammond_organ> .
+
+mid-prog:17 a mid:Program ;
+    rdfs:label "Percussive Organ" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Hammond_organ#Harmonic_Percussion> .
+
+mid-prog:18 a mid:Program ;
+    rdfs:label "Rock Organ" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Hammond_organ> .
+
+mid-prog:19 a mid:Program ;
+    rdfs:label "Church Organ" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Church_Organ> .
+
+mid-prog:20 a mid:Program ;
+    rdfs:label "Reed Organ" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Reed_Organ> .
+
+mid-prog:21 a mid:Program ;
+    rdfs:label "Accordion" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Accordion> .
+
+mid-prog:22 a mid:Program ;
+    rdfs:label "Harmonica" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Harmonica> .
+
+mid-prog:23 a mid:Program ;
+    rdfs:label "Tango Accordion" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Bandone%C3%B3n> .
+
+mid-prog:24 a mid:Program ;
+    rdfs:label "Acoustic Guitar (nylon)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Classical_guitar> .
+
+mid-prog:25 a mid:Program ;
+    rdfs:label "Acoustic Guitar (steel)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Steel-string_acoustic_guitar> .
+
+mid-prog:26 a mid:Program ;
+    rdfs:label "Electric Guitar (jazz)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Jazz_guitar> .
+
+mid-prog:27 a mid:Program ;
+    rdfs:label "Electric Guitar (clean)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Electric_guitar> .
+
+mid-prog:28 a mid:Program ;
+    rdfs:label "Electric Guitar (muted)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Electric_guitar> .
+
+mid-prog:29 a mid:Program ;
+    rdfs:label "Overdriven Guitar" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Electric_guitar> .
+
+mid-prog:30 a mid:Program ;
+    rdfs:label "Distortion Guitar" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Electric_guitar> .
+
+mid-prog:31 a mid:Program ;
+    rdfs:label "Guitar Harmonics" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Harmonic> .
+
+mid-prog:32 a mid:Program ;
+    rdfs:label "Acoustic Bass" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Acoustic_bass_guitar> .
+
+mid-prog:33 a mid:Program ;
+    rdfs:label "Electric Bass (finger)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Bass_guitar> .
+
+mid-prog:34 a mid:Program ;
+    rdfs:label "Electric Bass (pick)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Bass_guitar> .
+
+mid-prog:35 a mid:Program ;
+    rdfs:label "Fretless Bass" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Fretless_bass_guitar#Fretted_and_fretless_basses> .
+
+mid-prog:36 a mid:Program ;
+    rdfs:label "Slap Bass 1" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Slapping_(music)> .
+
+mid-prog:37 a mid:Program ;
+    rdfs:label "Slap Bass 2" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Slapping_(music)> .
+
+mid-prog:38 a mid:Program ;
+    rdfs:label "Synth Bass 1" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_bass> .
+
+mid-prog:39 a mid:Program ;
+    rdfs:label "Synth Bass 2" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synth_bass> .
+
+mid-prog:40 a mid:Program ;
+    rdfs:label "Violin" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Violin> .
+
+mid-prog:41 a mid:Program ;
+    rdfs:label "Viola" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Viola> .
+
+mid-prog:42 a mid:Program ;
+    rdfs:label "Cello" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Cello> .
+
+mid-prog:43 a mid:Program ;
+    rdfs:label "Contrabass" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Contrabass> .
+
+mid-prog:44 a mid:Program ;
+    rdfs:label "Tremolo Strings" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Tremolo> .
+
+mid-prog:45 a mid:Program ;
+    rdfs:label "Pizzicato Strings" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Pizzicato> .
+
+mid-prog:46 a mid:Program ;
+    rdfs:label "Orchestral Harp" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Harp> .
+
+mid-prog:47 a mid:Program ;
+    rdfs:label "Timpani" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Timpani> .
+
+mid-prog:48 a mid:Program ;
+    rdfs:label "String Ensemble 1" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/String_section> .
+
+mid-prog:49 a mid:Program ;
+    rdfs:label "String Ensemble 2" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/String_section> .
+
+mid-prog:50 a mid:Program ;
+    rdfs:label "Synth Strings 1" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/String_section> .
+
+mid-prog:51 a mid:Program ;
+    rdfs:label "Synth Strings 2" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/String_section> .
+
+mid-prog:52 a mid:Program ;
+    rdfs:label "Choir Aahs" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Choir> .
+
+mid-prog:53 a mid:Program ;
+    rdfs:label "Voice Oohs" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Human_voice> .
+
+mid-prog:54 a mid:Program ;
+    rdfs:label "Synth Choir" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/String_section> .
+
+mid-prog:55 a mid:Program ;
+    rdfs:label "Orchestra Hit" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Orchestra_hit> .
+
+mid-prog:56 a mid:Program ;
+    rdfs:label "Trumpet" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Trumpet> .
+
+mid-prog:57 a mid:Program ;
+    rdfs:label "Trombone" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Trombone> .
+
+mid-prog:58 a mid:Program ;
+    rdfs:label "Tuba" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Tuba> .
+
+mid-prog:59 a mid:Program ;
+    rdfs:label "Muted Trumpet" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Muted_trumpet> .
+
+mid-prog:60 a mid:Program ;
+    rdfs:label "French Horn" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/French_Horn> .
+
+mid-prog:61 a mid:Program ;
+    rdfs:label "Brass Section" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Brass_Section> .
+
+mid-prog:62 a mid:Program ;
+    rdfs:label "Brass 1" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Brass> .
+
+mid-prog:63 a mid:Program ;
+    rdfs:label "Brass 2" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Brass> .
+
+mid-prog:64 a mid:Program ;
+    rdfs:label "Soprano Sax" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Soprano_saxophone> .
+
+mid-prog:65 a mid:Program ;
+    rdfs:label "Alto Sax" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Alto_saxophone> .
+
+mid-prog:66 a mid:Program ;
+    rdfs:label "Tenor Sax" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Tenor_saxophone> .
+
+mid-prog:67 a mid:Program ;
+    rdfs:label "Baritone Sax" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Baritone_saxophone> .
+
+mid-prog:68 a mid:Program ;
+    rdfs:label "Oboe" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Oboe> .
+
+mid-prog:69 a mid:Program ;
+    rdfs:label "English Horn" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Cor_anglais> .
+
+mid-prog:70 a mid:Program ;
+    rdfs:label "Bassoon" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Bassoon> .
+
+mid-prog:71 a mid:Program ;
+    rdfs:label "Clarinet" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Clarinet> .
+
+mid-prog:72 a mid:Program ;
+    rdfs:label "Piccolo" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Piccolo> .
+
+mid-prog:73 a mid:Program ;
+    rdfs:label "Flute" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Flute> .
+
+mid-prog:74 a mid:Program ;
+    rdfs:label "Recorder" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Recorder_(musical_instrument)> .
+
+mid-prog:75 a mid:Program ;
+    rdfs:label "Pan Flute" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Pan_Flute> .
+
+mid-prog:76 a mid:Program ;
+    rdfs:label "Blown bottle" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Blown_bottle> .
+
+mid-prog:77 a mid:Program ;
+    rdfs:label "Shakuhachi" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Shakuhachi> .
+
+mid-prog:78 a mid:Program ;
+    rdfs:label "Whistle" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Whistle> .
+
+mid-prog:79 a mid:Program ;
+    rdfs:label "Ocarina" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Ocarina> .
+
+mid-prog:80 a mid:Program ;
+    rdfs:label "Lead 1 (square)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Square_wave> .
+
+mid-prog:81 a mid:Program ;
+    rdfs:label "Lead 2 (sawtooth)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sawtooth_wave> .
+
+mid-prog:82 a mid:Program ;
+    rdfs:label "Lead 3 (calliope)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Calliope_(music)> .
+
+mid-prog:83 a mid:Program ;
+    rdfs:label "Lead 4 (chiff)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> .
+
+mid-prog:84 a mid:Program ;
+    rdfs:label "Lead 5 (charang)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Charang> .
+
+mid-prog:85 a mid:Program ;
+    rdfs:label "Lead 6 (voice)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Choir> .
+
+mid-prog:86 a mid:Program ;
+    rdfs:label "Lead 7 (fifths)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Perfect_fifth> .
+
+mid-prog:87 a mid:Program ;
+    rdfs:label "Lead 8 (bass + lead)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer#Synth_lead> .
+
+mid-prog:88 a mid:Program ;
+    rdfs:label "Pad 1 (new age)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/New_Age> .
+
+mid-prog:89 a mid:Program ;
+    rdfs:label "Pad 2 (warm)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Warm> .
+
+mid-prog:90 a mid:Program ;
+    rdfs:label "Pad 3 (polysynth)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Synthesizer> .
+
+mid-prog:91 a mid:Program ;
+    rdfs:label "Pad 4 (choir)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Choir> .
+
+mid-prog:92 a mid:Program ;
+    rdfs:label "Pad 5 (bowed)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Bowed_string_instrument> .
+
+mid-prog:93 a mid:Program ;
+    rdfs:label "Pad 6 (metallic)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Metal_(music)> .
+
+mid-prog:94 a mid:Program ;
+    rdfs:label "Pad 7 (halo)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Halo_(music)> .
+
+mid-prog:95 a mid:Program ;
+    rdfs:label "Pad 8 (sweep)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sweep_(music)> .
+
+mid-prog:96 a mid:Program ;
+    rdfs:label "FX 1 (rain)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Rain> .
+
+mid-prog:97 a mid:Program ;
+    rdfs:label "FX 2 (soundtrack)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Soundtrack> .
+
+mid-prog:98 a mid:Program ;
+    rdfs:label "FX 3 (crystal)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Crystal> .
+
+mid-prog:99 a mid:Program ;
+    rdfs:label "FX 4 (atmosphere)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Atmosphere> .
+
+mid-prog:100 a mid:Program ;
+    rdfs:label "FX 5 (brightness)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Brightness> .
+
+mid-prog:101 a mid:Program ;
+    rdfs:label "FX 6 (goblins)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Goblin> .
+
+mid-prog:102 a mid:Program ;
+    rdfs:label "FX 7 (echoes)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Echo_(phenomenon)> .
+
+mid-prog:103 a mid:Program ;
+    rdfs:label "FX 8 (sci-fi)" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sound_effect> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Science_fiction> .
+
+mid-prog:104 a mid:Program ;
+    rdfs:label "Sitar" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Sitar> .
+
+mid-prog:105 a mid:Program ;
+    rdfs:label "Banjo" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Banjo> .
+
+mid-prog:106 a mid:Program ;
+    rdfs:label "Shamisen" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Shamisen> .
+
+mid-prog:107 a mid:Program ;
+    rdfs:label "Koto" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Koto_(musical_instrument)> .
+
+mid-prog:108 a mid:Program ;
+    rdfs:label "Kalimba" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Mar%C3%ADmbula> .
+
+mid-prog:109 a mid:Program ;
+    rdfs:label "Bagpipe" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Bagpipes> .
+
+mid-prog:110 a mid:Program ;
+    rdfs:label "Fiddle" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Fiddle> .
+
+mid-prog:111 a mid:Program ;
+    rdfs:label "Shanai" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Shehnai> .
+
+mid-prog:112 a mid:Program ;
+    rdfs:label "Tinkle Bell" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Bell> .
+
+mid-prog:113 a mid:Program ;
+    rdfs:label "Agogo" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Agog%C3%B4> .
+
+mid-prog:114 a mid:Program ;
+    rdfs:label "Steel Drums" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Steelpan> .
+
+mid-prog:115 a mid:Program ;
+    rdfs:label "Woodblock" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Wood_block> .
+
+mid-prog:116 a mid:Program ;
+    rdfs:label "Taiko Drum" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Taiko> .
+
+mid-prog:117 a mid:Program ;
+    rdfs:label "Melodic Tom" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Tom-tom_drum> .
+
+mid-prog:118 a mid:Program ;
+    rdfs:label "Synth Drum" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Electronic_drum> .
+
+mid-prog:119 a mid:Program ;
+    rdfs:label "Cymbal" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Cymbal> .
+
+mid-prog:120 a mid:Program ;
+    rdfs:label "Guitar Fret Noise" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Guitar> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Fret> .
+
+mid-prog:121 a mid:Program ;
+    rdfs:label "Breath Noise" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Breathing> .
+
+mid-prog:122 a mid:Program ;
+    rdfs:label "Seashore" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Coast> .
+
+mid-prog:123 a mid:Program ;
+    rdfs:label "Bird Tweet" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Bird_vocalisation> .
+
+mid-prog:124 a mid:Program ;
+    rdfs:label "Telephone Ring" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Ring_(telephone)> .
+
+mid-prog:125 a mid:Program ;
+    rdfs:label "Helicopter" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Helicopter> .
+
+mid-prog:126 a mid:Program ;
+    rdfs:label "Applause" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Applause> .
+
+mid-prog:127 a mid:Program ;
+    rdfs:label "Gunshot" .
+    rdfs:seeAlso <http://dbpedia.org/resource/Gunshot> .
