@@ -1,6 +1,5 @@
 @prefix mid: <http://purl.org/midi-ld/midi#> .
 @prefix mid-note: <http://purl.org/midi-ld/notes/> .
-@prefix mid-prog: <http://purl.org/midi-ld/programs/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # ---------------
