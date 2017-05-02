@@ -12,7 +12,7 @@ mid = Namespace("http://example.org/midi/")
 
 # Read the input RDF file
 g = Graph()
-g.parse(sys.argv[1], format="turtle")
+g.parse(sys.argv[1], format="nquads")
 
 # Initialize the MIDI file
 p_resolution = 96
