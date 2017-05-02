@@ -1,6 +1,6 @@
 import midi
 import rdflib
-from rdflib import Namespace, Graph, RDF, RDFS, URIRef, Literal
+from rdflib import Namespace, Graph, RDF, RDFS, URIRef, Literal, util
 import ast
 import sys
 
@@ -12,7 +12,7 @@ mid = Namespace("http://example.org/midi/")
 
 # Read the input RDF file
 g = Graph()
-g.parse(sys.argv[1], format="nquads")
+g.parse(sys.argv[1], format=util.guess_format(sys.argv[1]))
 
 # Initialize the MIDI file
 p_resolution = 96
