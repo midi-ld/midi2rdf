@@ -7,7 +7,7 @@ Suite of converters to transform MIDI files into RDF and backwards.
 You need python 2.7. An updated version of [virtualenv](https://virtualenv.pypa.io/en/stable/) is adviced.
 
 <pre>
-git clone https://github.com/albertmeronyo/midi2rdf
+git clone https://github.com/midi-ld/midi2rdf
 cd midi2rdf
 virtualenv .
 source bin/activate
@@ -16,9 +16,15 @@ pip install -r requirements.txt
 
 ## Usage
 
-`python src/midi2rdf.py <midi-input-file> <rdf-output-file>`: convert a MIDI file to RDF (turtle serialization):
+`python src/midi2rdf.py <midi-input-file> -f turtle|nquads|... [<rdf output file> [--gz]]`: convert a MIDI file to RDF (-f indicates your desired serialization; see https://rdflib.readthedocs.io/en/latest/faq.html#questions-about-serializing for options). Examples:
 
-`python src/rdf2midi.py <rdf-input-file> <midi-output-file>`: convert that RDF file back to MIDI
+<pre>
+python src/midi2rdf.py ghostbusters.mid -f turtle #prints MIDI as RDF Turtle in stdout
+python src/midi2rdf.py ghostbusters.mid -f n3 ghostbusters.nt #dumps MIDI as RDF N-Triples to file
+python src/midi2rdf.py ghostbusters.mid -f nquads ghostbusters.nq.gz --gz #dumps MIDI as RDF Nquads to gz compressed file
+</pre>
+
+`python src/rdf2midi.py <rdf-input-file> <midi-output-file>`: convert that RDF file back to MIDI. The serialization will be guessed from the <rdf-input-file> extension (so: name them carefully)
 
 ### Other tools
 

@@ -9,7 +9,7 @@ import hashlib
 import ast
 import gzip
 
-def midi2rdf(filename):
+def midi2rdf(filename, ser_format):
     """
     Returns a text/turtle dump of the input MIDI filename
     """
@@ -93,22 +93,22 @@ def midi2rdf(filename):
     g.bind('mid-prog', mid_prog)
     g.bind('prov', prov)
 
-    return g.serialize(format='nquads')
+    return g.serialize(format=ser_format)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "Usage: {0} <midi input file> [<rdf output file> [--gz]]".format(sys.argv[0])
+    if len(sys.argv) < 4:
+        print "Usage: {0} <midi input file> -f nquads|turtle|... [<rdf output file> [--gz]]".format(sys.argv[0])
         exit(2)
 
     filename = sys.argv[1]
-    dump = midi2rdf(filename)
+    dump = midi2rdf(filename, sys.argv[3])
 
-    if len(sys.argv) > 2:
+    if len(sys.argv) > 4:
         if '--gz' in sys.argv:
-            with gzip.open(sys.argv[2], 'wb') as outfile:
+            with gzip.open(sys.argv[4], 'wb') as outfile:
                 outfile.write(dump)
         else:
-            with open(sys.argv[2], 'w') as outfile:
+            with open(sys.argv[4], 'w') as outfile:
                 outfile.write(dump)
     else:
         print dump

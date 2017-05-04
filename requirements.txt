@@ -1,10 +1,13 @@
+appdirs==1.4.3
 html5lib==0.9999999
 isodate==0.5.4
 keepalive==0.5
+packaging==16.8
+pkg-resources==0.0.0
 pyparsing==2.1.0
-python-midi==v0.2.4
+python-midi==0.2.4
 rdflib==4.2.1
 six==1.10.0
 SPARQLWrapper==1.7.6
-wheel==0.24.0
+Unidecode==0.4.20
 Werkzeug==0.11.11
