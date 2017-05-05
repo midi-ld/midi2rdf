@@ -24,7 +24,7 @@ def midi2rdf(filename, ser_format):
     prov_uri = URIRef("http://www.w3.org/ns/prov#")
     mid_note_uri = URIRef("http://purl.org/midi-ld/notes/")
     mid_prog_uri = URIRef("http://purl.org/midi-ld/programs/")
-    m_uri = URIRef(url_fix("http://purl.org/midi-ld/patterns/" + str(md5_id) + "/"))
+    m_uri = URIRef(url_fix("http://purl.org/midi-ld/patterns/"))
     mid = Namespace(mid_uri)
     prov = Namespace(prov_uri)
     mid_note = Namespace(mid_note_uri)
@@ -35,7 +35,7 @@ def midi2rdf(filename, ser_format):
     g = ConjunctiveGraph(identifier=m_uri)
 
     # pattern = mid[filename.split('.')[0]]
-    pattern = mid[md5_id]
+    pattern = m[md5_id]
     g.add((pattern, RDF.type, mid.Pattern))
     g.add((pattern, mid.resolution, Literal(pattern_midi.resolution)))
     g.add((pattern, mid['format'], Literal(pattern_midi.format)))
@@ -51,12 +51,12 @@ def midi2rdf(filename, ser_format):
     lyrics_label = ""
 
     for n_track in range(len(pattern_midi)):
-        track = m['track' + str(n_track).zfill(2)] #So we can order by URI later -- UGLY PATCH
+        track = URIRef(pattern + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
         g.add((track, RDF.type, mid.Track))
         g.add((pattern, mid.hasTrack, track))
         for n_event in range(len(pattern_midi[n_track])):
             event_midi = pattern_midi[n_track][n_event]
-            event = m['track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4)]
+            event = URIRef(pattern + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
             g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
             g.add((track, mid.hasEvent, event))
             # Save the 'tick' slot (shared among all events)
