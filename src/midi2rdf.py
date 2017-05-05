@@ -24,7 +24,7 @@ def midi2rdf(filename, ser_format):
     prov_uri = URIRef("http://www.w3.org/ns/prov#")
     mid_note_uri = URIRef("http://purl.org/midi-ld/notes/")
     mid_prog_uri = URIRef("http://purl.org/midi-ld/programs/")
-    m_uri = URIRef(url_fix("http://purl.org/midi-ld/patterns/"))
+    m_uri = URIRef(url_fix("http://purl.org/midi-ld/pattern/"))
     mid = Namespace(mid_uri)
     prov = Namespace(prov_uri)
     mid_note = Namespace(mid_note_uri)
