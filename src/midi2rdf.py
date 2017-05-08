@@ -24,7 +24,7 @@ def midi2rdf(filename, ser_format):
     prov_uri = URIRef("http://www.w3.org/ns/prov#")
     mid_note_uri = URIRef("http://purl.org/midi-ld/notes/")
     mid_prog_uri = URIRef("http://purl.org/midi-ld/programs/")
-    m_uri = URIRef(url_fix("http://purl.org/midi-ld/pattern/"))
+    m_uri = URIRef(url_fix("http://purl.org/midi-ld/piece/"))
     mid = Namespace(mid_uri)
     prov = Namespace(prov_uri)
     mid_note = Namespace(mid_note_uri)
@@ -36,7 +36,7 @@ def midi2rdf(filename, ser_format):
 
     # pattern = mid[filename.split('.')[0]]
     pattern = m[md5_id]
-    g.add((pattern, RDF.type, mid.Pattern))
+    g.add((pattern, RDF.type, mid.Piece))
     g.add((pattern, mid.resolution, Literal(pattern_midi.resolution)))
     g.add((pattern, mid['format'], Literal(pattern_midi.format)))
 
