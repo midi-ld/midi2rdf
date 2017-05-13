@@ -34,8 +34,8 @@
   void:vocabulary <http://purl.org/midi-ld/midi#>;
   void:vocabulary <http://purl.org/midi-ld/notes/>;
   void:vocabulary <http://purl.org/midi-ld/programs/>;
-  void:triples "6325630574"; # update this
-  void:entities "151502"; # update this
+  void:triples "10215557355"; 
+  void:entities "308443";
   .
 
 <https://www.albertmeronyo.org/> a foaf:Person;
