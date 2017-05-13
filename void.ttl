@@ -28,9 +28,9 @@
   void:sparqlEndpoint <http://purl.org/midi-ld/sparql>;
   void:dataDump <http://midi-ld.amp.ops.labs.vu.nl/2016-11-21/midi-ld.tar.gz>;
   void:dataDump <http://midi-ld.amp.ops.labs.vu.nl/2017-01-11/midi-ld.tar.gz>;
-  void:exampleResource <http://purl.org/midi-ld/pattern/87dd99fb346cd4c7934cb36a00868cbe>;
-  void:uriSpace "http://purl.org/midi-ld/pattern/";
-  void:uriRegexPattern "^http://purl\\.org/midi\\-ld/pattern/";
+  void:exampleResource <http://purl.org/midi-ld/piece/87dd99fb346cd4c7934cb36a00868cbe>;
+  void:uriSpace "http://purl.org/midi-ld/piece/";
+  void:uriRegexPattern "^http://purl\\.org/midi\\-ld/piece/";
   void:vocabulary <http://purl.org/midi-ld/midi#>;
   void:vocabulary <http://purl.org/midi-ld/notes/>;
   void:vocabulary <http://purl.org/midi-ld/programs/>;
