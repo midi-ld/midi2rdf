@@ -8,6 +8,8 @@ from werkzeug.urls import url_fix
 import hashlib
 import ast
 import gzip
+from datetime import datetime
+import music21
 
 def midi2rdf(filename, ser_format):
     """
@@ -34,15 +36,31 @@ def midi2rdf(filename, ser_format):
     # Create the graph
     g = ConjunctiveGraph(identifier=m_uri)
 
-    # pattern = mid[filename.split('.')[0]]
-    pattern = m[md5_id]
-    g.add((pattern, RDF.type, mid.Piece))
-    g.add((pattern, mid.resolution, Literal(pattern_midi.resolution)))
-    g.add((pattern, mid['format'], Literal(pattern_midi.format)))
+    # piece = mid[filename.split('.')[0]]
+    piece = m[md5_id]
+    g.add((piece, RDF.type, mid.Piece))
+    g.add((piece, mid.resolution, Literal(pattern_midi.resolution)))
+    g.add((piece, mid['format'], Literal(pattern_midi.format)))
 
-    # Publication info
-    # TODO: replace with nanopubs
-    g.add((pattern, prov.wasDerivedFrom, Literal(filename)))
+    # PROV info
+    # g.add((piece, prov.wasDerivedFrom, Literal(filename)))
+    agent = URIRef("https://github.com/midi-ld/midi2rdf")
+    entity_d = piece
+    entity_o = URIRef("http://purl.org/midi-ld/file/{}".format(md5_id))
+    activity = URIRef(piece + "-activity")
+
+    g.add((agent, RDF.type, prov.Agent))
+    g.add((entity_d, RDF.type, prov.Entity))
+    g.add((entity_o, RDF.type, prov.Entity))
+    g.add((entity_o, RDF.type, mid.MIDIFile))
+    g.add((entity_o, mid.path, Literal(filename)))
+    g.add((activity, RDF.type, prov.Activity))
+    g.add((entity_d, prov.wasGeneratedBy, activity))
+    g.add((entity_d, prov.wasAttributedTo, agent))
+    g.add((entity_d, prov.wasDerivedFrom, entity_o))
+    g.add((activity, prov.wasAssociatedWith, agent))
+    g.add((activity, prov.startedAtTime, Literal(datetime.now())))
+    g.add((activity, prov.used, entity_o))
 
     # Since we won't mess with RDF statement order, we'll have absolute ticks
     # pattern_midi.make_ticks_abs()
@@ -50,13 +68,18 @@ def midi2rdf(filename, ser_format):
     # We'll append the lyrics in this label
     lyrics_label = ""
 
+    # Attach key to the piece
+    m21stream = music21.converter.parse(filename)
+    key = m21stream.analyze('key')
+    g.add((piece, mid.key, Literal(key)))
+
     for n_track in range(len(pattern_midi)):
-        track = URIRef(pattern + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
+        track = URIRef(piece + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
         g.add((track, RDF.type, mid.Track))
-        g.add((pattern, mid.hasTrack, track))
+        g.add((piece, mid.hasTrack, track))
         for n_event in range(len(pattern_midi[n_track])):
             event_midi = pattern_midi[n_track][n_event]
-            event = URIRef(pattern + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
+            event = URIRef(piece + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
             g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
             g.add((track, mid.hasEvent, event))
             # Save the 'tick' slot (shared among all events)
@@ -77,7 +100,11 @@ def midi2rdf(filename, ser_format):
     			lyrics_label += text_value
                 elif type(event_midi).__name__ in ['NoteOnEvent', 'NoteOffEvent'] and slot == 'pitch':
                     pitch = str(getattr(event_midi, slot))
+                    c = music21.pitch.Pitch()
+                    c.midi = int(pitch)
+                    scale_degree = key.getScaleDegreeFromPitch(c.name)
                     g.add((event, mid['note'], mid_note[pitch]))
+                    g.add((event, mid['scaleDegree'], Literal(scale_degree)))
                 elif type(event_midi).__name__ in ['ProgramChangeEvent'] and slot == 'value':
                     program = str(getattr(event_midi, slot))
                     g.add((event, mid['program'], mid_prog[program]))
@@ -86,12 +113,17 @@ def midi2rdf(filename, ser_format):
 
     # Add the global lyrics link, if lyrics not empty
     if lyrics_label:
-    	g.add((pattern, mid['lyrics'], Literal(lyrics_label)))
+    	g.add((piece, mid['lyrics'], Literal(lyrics_label)))
 
-    g.bind('mid', mid)
-    g.bind('mid-note', mid_note)
-    g.bind('mid-prog', mid_prog)
+    g.bind('midi', mid)
+    g.bind('midi-note', mid_note)
+    g.bind('midi-prog', mid_prog)
     g.bind('prov', prov)
+
+    # Finished -- record PROV end times
+    end_time = Literal(datetime.now())
+    g.add((entity_d, prov.generatedAtTime, end_time) )
+    g.add((activity, prov.endedAtTime, end_time) )
 
     return g.serialize(format=ser_format)
 
