@@ -38,7 +38,7 @@ python src/midi2rdf.py ghostbusters.mid -f nquads ghostbusters.nq.gz --gz #dumps
 
 - Interoperable representation of MIDI files: link their contents to annotations, other musical events (e.g. MusicXML), or to any related resource on the Web
 - Lossless conversion: MIDI files play the same after round-tripping to RDF
-- If you prefer to use a `cloud service' version (i.e. without installing anything), go [here](http://midi2rdf.amp.ops.vu.nl/)
+- If you prefer to use a `cloud service' version (i.e. without installing anything), go [here](http://midi2rdf.amp.ops.labs.vu.nl/)
 
 ## Papers & References
 
