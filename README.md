@@ -42,7 +42,7 @@ python src/midi2rdf.py ghostbusters.mid -f nquads ghostbusters.nq.gz --gz #dumps
 
 ## Documentation
 
-Please check out the [MIDI Linked Data documentation](https://github.com/midi-ld/documentation) for additional details on how to browse MIDI files as Linked Data, link and query them, etc.
+Please check out the [MIDI Linked Data documentation](https://github.com/midi-ld/documentation) for details and tutorials on how to browse MIDI files as Linked Data, query them, etc.
 
 ## Papers & References
 
