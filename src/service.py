@@ -41,10 +41,10 @@ def upload_file():
             filename = secure_filename(file.filename)
             local_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(local_filename)
-            dump = midi2rdf(local_filename)
+            dump = midi2rdf(local_filename, 'turtle')
             # If user accepts, we load the dump in the triplestore
             if request.form.get("cloud"):
-                with open(VIRTUOSO_LOAD + filename + '.nq', 'w') as rdffile:
+                with open(VIRTUOSO_LOAD + filename + '.ttl', 'w') as rdffile:
                     rdffile.write(dump)
 		Popen('/usr/local/virtuoso-opensource/bin/isql 1112 < /home/amp/src/midi2rdf-current/src/virtuoso-load.sql', shell=True)
             return Response(dump, mimetype="application/n-quads", headers={"Content-disposition": "attachment; filename={}".format(filename + '.nq')})
