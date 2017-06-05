@@ -1,5 +1,5 @@
 from rdf2midi import rdf2midi
-from flask import Flask, request, send_from_directory, render_template, make_response, jsonify
+from flask import Flask, request, send_from_directory, render_template, make_response
 import requests
 
 
@@ -28,7 +28,7 @@ def convert(hash):
         dump.write(res.text)
 
     rdf2midi('static/midi/' + hash + '.ttl', 'static/midi/' + hash + '.mid')
-    return make_response(jsonify('200'))
+    return make_response('200')
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8093, debug=True)
