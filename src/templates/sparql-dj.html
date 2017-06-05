@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{url_for('.static', filename='img/favicon.ico')}}">
+
+    <title>SPARQL-DJ</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-90842480-1', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+
+  <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+
+    <!-- Custom styles for this template -->
+    <link href="{{url_for('.static', filename='css/midi-ld.css')}}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="#">Home</a></li>
+            <li role="presentation"><a href="http://virtuoso-midi.amp.ops.labs.vu.nl/sparql">SPARQL endpoint</a></li>
+	    <li role="presentation"><a href="https://github.com/midi-ld/midi2rdf/issues">Issues</a></li>
+            <li role="presentation"><a href="https://github.com/midi-ld/">GitHub</a></li>
+            <li role="presentation"><a href="mailto:albert.merono@vu.nl">Contact</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">SPARQL-DJ</h3>
+      </div>
+
+      <div class="jumbotron">
+        <img src="{{url_for('.static', filename='img/logo.png')}}"></img>
+        <h1>SPARQL-DJ</h1>
+        <p class="lead">Mashup like a Linked Data pro!</p>
+
+      </div>
+
+      <div class="col-lg-12">
+        <div id="group1" class="form-group">
+          <label for="query">Search for your first MIDI</label>
+          <div class="input-group">
+          <input type="text" class="form-control" id="query" placeholder="Try e.g. 'Black Sabbath' or 'War Pigs'">
+          <span class="input-group-btn">
+            <button style="" class="btn btn-default" id="search">Search</button>
+          </span>
+        </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-12">
+        <table class="table table-hover table-condensed" id="song1table">
+        </table>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-12">
+
+	<p>Go back to <a href="https://midi-ld.github.io/">MIDI Linked Data</a>.</p>
+
+        </div>
+      </div>
+
+
+
+      <footer class="footer">
+        <p>&copy; 2016-2017 Albert Mero&ntilde;o-Pe&ntilde;uela. Vrije Universiteit Amsterdam</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+<script>
+
+function choose_midi_handler() {
+  return false;
+}
+
+function play_midi_handler(hash) {
+  console.log(hash);
+  $.ajax({
+    url : "/convert/" + hash,
+    success: function(data) {
+      console.log(data);
+      console.log('Gonna play it!');
+      MIDIjs.play("/static/midi/" + hash + ".mid");
+    }
+  });
+  return false;
+}
+
+$('#query').keypress(function(e){
+        if(e.which == 13){//Enter key pressed
+            $('#search').click();//Trigger search button click event
+        }
+    });
+
+$('#search').click(function(){
+  console.log($('#query').val());
+  var url = "http://grlc.io/api/midi-ld/queries/filename_search?query=" + $('#query').val();
+  $.ajax({
+    headers : {
+      Accept : 'application/json'
+    },
+    url: url,
+    success: function(data) {
+      var res = data.results.bindings;
+      var rows = "";
+      console.log(res);
+      $('#song1table').empty();
+      $.each(res, function(i){
+          var pattern = res[i].MIDIpiece.value;
+          console.log(pattern);
+          var hash = pattern.substring(pattern.lastIndexOf("/") + 1, pattern.length);
+          //var mid = "{{url_for('.static', filename='midi/" + hash + ".mid')}}";
+          //console.log(mid);
+          rows += "<tr><td><a href='" + pattern + "' target='_blank'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi_handler();return false;'>Select</a></td></tr>";
+      });
+      $('#song1table').append(rows);
+    }
+  });
+
+});
+</script>
+
+  </body>
+</html>
