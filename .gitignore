@@ -71,3 +71,6 @@ include/
 bin/
 local/
 share/
+
+src/static/midi/*.ttl
+src/static/midi/*.mid
