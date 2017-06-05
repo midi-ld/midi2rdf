@@ -4,7 +4,7 @@ Suite of converters to transform MIDI files into RDF and backwards.
 
 ## Install
 
-You need python 2.7. An updated version of [virtualenv](https://virtualenv.pypa.io/en/stable/) is adviced.
+You need python 2.7. An updated version of [virtualenv](https://virtualenv.pypa.io/en/stable/) is recommended.
 
 <pre>
 git clone https://github.com/midi-ld/midi2rdf
