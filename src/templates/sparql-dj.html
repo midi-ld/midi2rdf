@@ -85,8 +85,48 @@
         </table>
       </div>
 
+      <div class="col-lg-12">
+        <div id="group2" class="form-group" style="display:none;">
+          <label for="query">Search for your second MIDI</label>
+          <div class="input-group">
+          <input type="text" class="form-control" id="query2" placeholder="Try e.g. 'Black Sabbath' or 'War Pigs'">
+          <span class="input-group-btn">
+            <button style="" class="btn btn-default" id="search2">Search</button>
+          </span>
+        </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-12">
+        <table class="table table-hover table-condensed" id="song2table">
+        </table>
+      </div>
+
+
+      <div class="col-lg-12">
+        <div id="group3" class="form-group" style="display:none;">
+          <label for="query">Select tracks</label>
+          <div class="input-group" id="checkboxes">
+
+        </div>
+
+
+          <span class="input-group-btn">
+            <div class="col-lg-12 text-center" style="margin-top: 20px">
+              <button class="btn btn-default" id="playtracks">Play</button>
+              <button class="btn btn-default" id="stoptracks">Stop</button>
+              <a href="/static/midi/mashup.ttl" target="_blank"><button class="btn btn-default" id="downloadtracks" disabled>Download</button></a>
+            </div>
+          </span>
+        </div>
+
+      </div>
+
       <div class="row marketing">
         <div class="col-lg-12">
+
+
 
 	<p>Go back to <a href="https://midi-ld.github.io/">MIDI Linked Data</a>.</p>
 
@@ -103,7 +143,111 @@
 
 <script>
 
-function choose_midi_handler() {
+var hash1 = "";
+var hash2 = "";
+
+// $('#downloadtracks').click(function(e){
+//     $.ajax({
+//       url : '/static/midi/mashup.ttl',
+//       success : function(data) {
+//         console.log(data);
+//       }
+//     });
+// });
+
+$('#stoptracks').click(function(e){
+  MIDIjs.stop();
+  return false;
+});
+
+$('#playtracks').click(function(e) {
+    console.log('Composing tracks...');
+
+    tracks = [];
+    $('input[name="track"]:checked').each(function(){
+      console.log(this.value);
+      tracks.push(this.value);
+    });
+
+    $.ajax({
+        url : '/mashup',
+        data : {
+          tracks : tracks,
+          hash1: hash1,
+          hash2: hash2
+        },
+        success: function (data) {
+          console.log(data);
+          console.log('Gonna play it!');
+          MIDIjs.play("/static/midi/mashup.mid");
+          $('#downloadtracks').prop('disabled', false);
+        }
+    });
+
+    return false;
+});
+
+function choose_midi1_handler(hash) {
+  hash1 = hash;
+  console.log("First hash: " + hash1);
+  console.log("Second hash: " + hash2);
+  $('#group2').show();
+
+  return false;
+}
+
+function choose_midi2_handler(hash) {
+  hash2 = hash;
+  console.log("First hash: " + hash1);
+  console.log("Second hash: " + hash2);
+  $('#group3').show();
+
+  var url1 = "http://grlc.io/api/midi-ld/queries/tracks_per_piece_param?pattern=http%3A%2F%2Fpurl.org%2Fmidi-ld%2Fpattern%2F" + hash1;
+  var url2 = "http://grlc.io/api/midi-ld/queries/tracks_per_piece_param?pattern=http%3A%2F%2Fpurl.org%2Fmidi-ld%2Fpattern%2F" + hash2;
+  var res = "";
+  $.ajax({
+    url : url1,
+    headers : {
+      Accept : 'application/json'
+    },
+    success : function (data) {
+      //console.log(data);
+      tracks = data.results.bindings;
+      $.each(tracks, function(i) {
+        // tracklist.push(tracks[i].track.value);
+        res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank'>" + tracks[i].track.value + "</a><br>";
+      });
+      $.ajax({
+        url : url2,
+        headers : {
+          Accept : 'application/json'
+        },
+        success : function (data) {
+          //console.log(data);
+          tracks = data.results.bindings;
+          $.each(tracks, function(i) {
+            // tracklist.push(tracks[i].track.value);
+            res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank'>" + tracks[i].track.value + "</a><br>";
+          });
+          $('#checkboxes').empty();
+          $('#checkboxes').append(res);
+      }
+    });
+    }
+  });
+
+
+
+    // checks += "<input type='checkbox' name='track' value='" + r + "'>" + r + "<br>";
+
+  // console.log(tracklist);
+  // $.each(res, function(i){
+  //   console.log(res);
+  // });
+  // var checks = "";
+
+  // console.log(checks);
+
   return false;
 }
 
@@ -145,9 +289,42 @@ $('#search').click(function(){
           var hash = pattern.substring(pattern.lastIndexOf("/") + 1, pattern.length);
           //var mid = "{{url_for('.static', filename='midi/" + hash + ".mid')}}";
           //console.log(mid);
-          rows += "<tr><td><a href='" + pattern + "' target='_blank'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi_handler();return false;'>Select</a></td></tr>";
+          rows += "<tr><td><a href='" + pattern + "' target='_blank'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi1_handler(\"" + hash + "\");return false;'>Select</a></td></tr>";
       });
       $('#song1table').append(rows);
+    }
+  });
+
+});
+
+$('#query2').keypress(function(e){
+        if(e.which == 13){//Enter key pressed
+            $('#search2').click();//Trigger search button click event
+        }
+    });
+
+$('#search2').click(function(){
+  console.log($('#query2').val());
+  var url = "http://grlc.io/api/midi-ld/queries/filename_search?query=" + $('#query2').val();
+  $.ajax({
+    headers : {
+      Accept : 'application/json'
+    },
+    url: url,
+    success: function(data) {
+      var res = data.results.bindings;
+      var rows = "";
+      console.log(res);
+      $('#song2table').empty();
+      $.each(res, function(i){
+          var pattern = res[i].MIDIpiece.value;
+          console.log(pattern);
+          var hash = pattern.substring(pattern.lastIndexOf("/") + 1, pattern.length);
+          //var mid = "{{url_for('.static', filename='midi/" + hash + ".mid')}}";
+          //console.log(mid);
+          rows += "<tr><td><a href='" + pattern + "' target='_blank'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi2_handler(\"" + hash + "\");return false;'>Select</a></td></tr>";
+      });
+      $('#song2table').append(rows);
     }
   });
 
