@@ -77,3 +77,9 @@ body {
     border-bottom: 0;
   }
 }
+
+/* amp: margins for the form */
+.form-margin {
+  margin-bottom: 5px;
+  margin-right: 10px;
+}

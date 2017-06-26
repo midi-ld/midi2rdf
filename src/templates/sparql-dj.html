@@ -90,13 +90,52 @@
           <label for="query">Search for your second MIDI</label>
           <div class="input-group">
           <input type="text" class="form-control" id="query2" placeholder="Try e.g. 'Black Sabbath' or 'War Pigs'">
+          <span class="input-group-addon">
+            <input type="checkbox" aria-label="Same tempo values?" id="sametempo" checked> Same tempo values</input>
+          </span>
           <span class="input-group-btn">
             <button style="" class="btn btn-default" id="search2">Search</button>
           </span>
+          </div>
         </div>
         </div>
 
-      </div>
+        <div id="tempogroup" class="col-lg-12" style="display:none;">
+              <p>Specify tempo values for the second MIDI (leave empty for any)</p>
+
+          <div class="form-inline col-lg-12">
+            <div class="row col-lg-12">
+            <div class="form-group">
+              <label for="resolution" style="margin-right:10px;">Resolution</label>
+              <input type="text" class="form-control form-margin" id="resolution" placeholder="E.g. 480">
+            </div>
+            <div class="form-group">
+              <label for="metronome" style="margin-right:10px;">Metronome</label>
+              <input type="text" class="form-control form-margin" id="metronome" placeholder="E.g. 24">
+            </div>
+          </div>
+          <div class="row col-lg-12">
+            <div class="form-group">
+              <label for="numerator" style="margin-right:10px;">Numerator</label>
+              <input type="text" class="form-control form-margin" id="numerator" placeholder="E.g. 4">
+            </div>
+            <div class="form-group">
+              <label for="denominator" style="margin-right:10px;">Denominator</label>
+              <input type="text" class="form-control form-margin" id="denominator" placeholder="E.g. 4">
+            </div>
+          </div>
+          <div class="row col-lg-12">
+            <div class="form-group">
+              <label for="thirtyseconds" style="margin-right:10px;">Thirtyseconds</label>
+              <input type="text" class="form-control form-margin" id="thirtyseconds" placeholder="E.g. 8">
+            </div>
+          </div>
+
+
+          </div>
+        </div>
+
+
 
       <div class="col-lg-12">
         <table class="table table-hover table-condensed" id="song2table">
@@ -145,6 +184,11 @@
 
 var hash1 = "";
 var hash2 = "";
+var hash1_resolution = 0;
+var hash1_denominator = 0;
+var hash1_metronome = 0;
+var hash1_numerator = 0;
+var hash1_thirtyseconds = 0;
 
 // $('#downloadtracks').click(function(e){
 //     $.ajax({
@@ -154,6 +198,40 @@ var hash2 = "";
 //       }
 //     });
 // });
+
+
+// disable send buttons if query text is empty
+$(document).ready(function(){
+    $('#search').attr('disabled',true);
+    $('#query').keyup(function(){
+        if($(this).val().length !== 0)
+            $('#search').attr('disabled', false);
+        else
+            $('#search').attr('disabled',true);
+    });
+
+    $('#search2').attr('disabled',true);
+    $('#query2').keyup(function(){
+        if($(this).val().length !== 0)
+            $('#search2').attr('disabled', false);
+        else
+            $('#search2').attr('disabled',true);
+    });
+});
+
+$('#sametempo').change(function (e) {
+    if (this.checked) {
+      $('#tempogroup').hide();
+    } else {
+      $('#tempogroup').show();
+    }
+    console.log("sametempo: " + $("#sametempo").is(":checked"));
+    console.log("resolution: " + $("#resolution").val());
+    console.log("numerator: " + $("#numerator").val());
+    console.log("thirtyseconds: " + $("#thirtyseconds").val());
+    console.log("metronome: " + $("#metronome").val());
+    console.log("denominator: " + $("#denominator").val());
+});
 
 $('#stoptracks').click(function(e){
   MIDIjs.stop();
@@ -192,6 +270,27 @@ function choose_midi1_handler(hash) {
   console.log("First hash: " + hash1);
   console.log("Second hash: " + hash2);
   $('#group2').show();
+
+  // Ask hash1 tempo values
+  var url = "http://grlc.io/api/midi-ld/queries/tempo_by_pattern";
+  $.ajax({
+    url: url,
+    data : {
+      pattern : "http://purl.org/midi-ld/pattern/" + hash1
+    },
+    headers : {
+      Accept : 'application/json'
+    },
+    success : function (data) {
+      tempo = data.results.bindings[0];
+      hash1_resolution = tempo.resolution.value;
+      hash1_denominator = tempo.denominator.value;
+      hash1_metronome = tempo.metronome.value;
+      hash1_numerator = tempo.numerator.value;
+      hash1_thirtyseconds = tempo.thirtyseconds.value;
+    }
+
+  });
 
   return false;
 }
@@ -265,7 +364,7 @@ function play_midi_handler(hash) {
 }
 
 $('#query').keypress(function(e){
-        if(e.which == 13){//Enter key pressed
+        if(e.which == 13 && $(this).val().length !== 0){//Enter key pressed
             $('#search').click();//Trigger search button click event
         }
     });
@@ -298,17 +397,54 @@ $('#search').click(function(){
 });
 
 $('#query2').keypress(function(e){
-        if(e.which == 13){//Enter key pressed
+        if(e.which == 13 && $(this).val().length !== 0){//Enter key pressed
             $('#search2').click();//Trigger search button click event
         }
     });
 
 $('#search2').click(function(){
   console.log($('#query2').val());
-  var url = "http://grlc.io/api/midi-ld/queries/filename_search?query=" + $('#query2').val();
+  var url = "http://grlc.io/api/midi-ld/queries/patterns_by_tempo";
+  var sametempo =  $("#sametempo").is(":checked");
+  console.log(sametempo);
+  var resolution = $("#resolution").val();
+  var numerator = $("#numerator").val();
+  var thirtyseconds = $("#thirtyseconds").val();
+  var metronome = $("#metronome").val();
+  var denominator = $("#denominator").val();
+  var query = " ";
+  if ($('#query2').val()) {
+    query = $('#query2').val();
+  }
+
+  // if same tempo is checked, use the tempo values of hash1
+  if (sametempo) {
+    resolution = hash1_resolution;
+    numerator = hash1_numerator;
+    thirtyseconds = hash1_thirtyseconds;
+    metronome = hash1_metronome;
+    denominator = hash1_denominator;
+  }
+
+  console.log("query: " + query);
+  console.log("resolution: " + resolution);
+  console.log("denominator: " + denominator);
+  console.log("metronome: " + metronome);
+  console.log("numerator: " + numerator);
+  console.log("thirtyseconds: " + thirtyseconds);
+
+  // url = "http://grlc.io/api/midi-ld/queries/filename_search?query=" + $('#query2').val();
   $.ajax({
     headers : {
       Accept : 'application/json'
+    },
+    data : {
+      resolution : resolution,
+      numerator : numerator,
+      thirtyseconds : thirtyseconds,
+      metronome : metronome,
+      denominator : denominator,
+      query : query
     },
     url: url,
     success: function(data) {
