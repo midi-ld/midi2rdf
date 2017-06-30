@@ -312,9 +312,15 @@ function choose_midi2_handler(hash) {
     success : function (data) {
       //console.log(data);
       tracks = data.results.bindings;
+      console.log(tracks);
       $.each(tracks, function(i) {
         // tracklist.push(tracks[i].track.value);
-        res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank' title='" + tracks[i].trackname.value + "'>" + tracks[i].track.value + "</a><br>";
+        var track = tracks[i].track.value;
+        var trackname = ""
+        if (tracks[i].trackname) {
+          trackname = tracks[i].trackname.value;
+        }
+        res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + track + "' checked><a href='" + track + "' target='_blank' title='" + trackname + "'>" + track + "</a><br>";
       });
       $.ajax({
         url : url2,
@@ -326,7 +332,12 @@ function choose_midi2_handler(hash) {
           tracks = data.results.bindings;
           $.each(tracks, function(i) {
             // tracklist.push(tracks[i].track.value);
-            res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank' title='" + tracks[i].trackname.value + "'>" + tracks[i].track.value + "</a><br>";
+            var track = tracks[i].track.value;
+            var trackname = ""
+            if (tracks[i].trackname) {
+              trackname = tracks[i].trackname.value;
+            }
+            res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + track + "' checked><a href='" + track + "' target='_blank' title='" + trackname + "'>" + track + "</a><br>";
           });
           $('#checkboxes').empty();
           $('#checkboxes').append(res);
