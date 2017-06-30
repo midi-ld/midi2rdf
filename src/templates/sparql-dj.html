@@ -314,7 +314,7 @@ function choose_midi2_handler(hash) {
       tracks = data.results.bindings;
       $.each(tracks, function(i) {
         // tracklist.push(tracks[i].track.value);
-        res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank'>" + tracks[i].track.value + "</a><br>";
+        res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank' title='" + tracks[i].trackname.value + "'>" + tracks[i].track.value + "</a><br>";
       });
       $.ajax({
         url : url2,
@@ -326,7 +326,7 @@ function choose_midi2_handler(hash) {
           tracks = data.results.bindings;
           $.each(tracks, function(i) {
             // tracklist.push(tracks[i].track.value);
-            res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank'>" + tracks[i].track.value + "</a><br>";
+            res += "<input class='form-check-input' style='margin-right: 5px' type='checkbox' name='track' value='" + tracks[i].track.value + "' checked><a href='" + tracks[i].track.value + "' target='_blank' title='" + tracks[i].trackname.value + "'>" + tracks[i].track.value + "</a><br>";
           });
           $('#checkboxes').empty();
           $('#checkboxes').append(res);
@@ -384,11 +384,13 @@ $('#search').click(function(){
       $('#song1table').empty();
       $.each(res, function(i){
           var pattern = res[i].MIDIpiece.value;
+          var label = res[i].wasDerivedFrom.value;
           console.log(pattern);
+          console.log(label);
           var hash = pattern.substring(pattern.lastIndexOf("/") + 1, pattern.length);
           //var mid = "{{url_for('.static', filename='midi/" + hash + ".mid')}}";
           //console.log(mid);
-          rows += "<tr><td><a href='" + pattern + "' target='_blank'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi1_handler(\"" + hash + "\");return false;'>Select</a></td></tr>";
+          rows += "<tr><td><a href='" + pattern + "' target='_blank' title='" + label + "'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi1_handler(\"" + hash + "\");return false;'>Select</a></td></tr>";
       });
       $('#song1table').append(rows);
     }
@@ -454,11 +456,13 @@ $('#search2').click(function(){
       $('#song2table').empty();
       $.each(res, function(i){
           var pattern = res[i].MIDIpiece.value;
+          var label = res[i].filename.value;
           console.log(pattern);
+          console.log(label);
           var hash = pattern.substring(pattern.lastIndexOf("/") + 1, pattern.length);
           //var mid = "{{url_for('.static', filename='midi/" + hash + ".mid')}}";
           //console.log(mid);
-          rows += "<tr><td><a href='" + pattern + "' target='_blank'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi2_handler(\"" + hash + "\");return false;'>Select</a></td></tr>";
+          rows += "<tr><td><a href='" + pattern + "' target='_blank' title='" + label + "'>" + pattern + "</a></td><td><a href='#' onClick='play_midi_handler(\"" + hash + "\");return false;'>Play</a></td><td><a href='#' onClick='MIDIjs.stop();return false;'>Stop</a></td><td><a href='#' onClick='choose_midi2_handler(\"" + hash + "\");return false;'>Select</a></td></tr>";
       });
       $('#song2table').append(rows);
     }
