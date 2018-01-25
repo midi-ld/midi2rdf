@@ -12,7 +12,6 @@ from datetime import datetime
 import music21
 music21.environment.UserSettings()['warnings'] = 0
 
-
 def midi2rdf(filename, ser_format):
     """
     Returns a text/turtle dump of the input MIDI filename
@@ -98,8 +97,8 @@ def midi2rdf(filename, ser_format):
                     # print text_value
                     # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
                     g.add((event, RDFS.label, Literal(text_value)))
-    		if type(event_midi).__name__ == 'LyricsEvent':
-    			lyrics_label += text_value
+                    if type(event_midi).__name__ == 'LyricsEvent':
+            			lyrics_label += text_value
                 elif type(event_midi).__name__ in ['NoteOnEvent', 'NoteOffEvent'] and slot == 'pitch':
                     pitch = str(getattr(event_midi, slot))
                     c = music21.pitch.Pitch()
