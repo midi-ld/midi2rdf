@@ -10,8 +10,9 @@ itsdangerous==0.24
 Jinja2==2.9.6
 keepalive==0.5
 MarkupSafe==1.0
+music21==4.1.0
 packaging==16.8
-pkg-resources==0.0.0
+pygame==1.9.3
 pyparsing==2.2.0
 python-midi==0.2.4
 rdflib==4.2.1

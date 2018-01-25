@@ -10,6 +10,8 @@ import ast
 import gzip
 from datetime import datetime
 import music21
+music21.environment.UserSettings()['warnings'] = 0
+
 
 def midi2rdf(filename, ser_format):
     """
@@ -128,6 +130,8 @@ def midi2rdf(filename, ser_format):
     return g.serialize(format=ser_format)
 
 if __name__ == "__main__":
+
+
     if len(sys.argv) < 4:
         print "Usage: {0} <midi input file> -f nquads|turtle|... [<rdf output file> [--gz]]".format(sys.argv[0])
         exit(2)
