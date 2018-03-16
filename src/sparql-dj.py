@@ -69,7 +69,7 @@ def midimashup():
     print pattern2
 
     url = "http://virtuoso-midi.amp.ops.labs.vu.nl/sparql"
-    query ="PREFIX mid: <http://purl.org/midi-ld/midi#> CONSTRUCT { <newsong> a mid:Pattern ; mid:hasTrack ?track . <newsong> mid:format ?format . <newsong> mid:resolution ?resolution . ?track mid:hasEvent ?event . ?track a mid:Track . ?event a ?type . ?event ?property ?value . } WHERE { { " + pattern1 + " mid:hasTrack ?track . " + pattern1 + " mid:format ?format . " + pattern1 + " mid:resolution ?resolution . ?track mid:hasEvent ?event . ?event a ?type . ?event ?property ?value . FILTER (?track IN (<arbitrary>)) } UNION { " + pattern2 + " mid:hasTrack ?track . " + pattern2 + " mid:format ?format . " + pattern2 + " mid:resolution ?resolution . ?track mid:hasEvent ?event . ?event a ?type . ?event ?property ?value . FILTER (?track IN (<arbitrary>)) } }"
+    query ="PREFIX mid: <http://purl.org/midi-ld/midi#> CONSTRUCT { <newsong> a mid:Pattern ; mid:hasTrack ?track . <newsong> mid:format ?format . <newsong> mid:resolution ?resolution . ?track mid:hasEvent ?event . ?track a mid:Track . ?event a ?type . ?event ?property ?value . } WHERE { { " + pattern1 + " mid:hasTrack ?track . " + pattern1 + " mid:format ?format . " + pattern1 + " mid:resolution ?resolution . ?track mid:hasEvent ?event . ?event a ?type . ?event ?property ?value . } UNION { " + pattern2 + " mid:hasTrack ?track . " + pattern2 + " mid:format ?format . " + pattern2 + " mid:resolution ?resolution . ?track mid:hasEvent ?event . ?event a ?type . ?event ?property ?value . } }"
 
     print query
 
