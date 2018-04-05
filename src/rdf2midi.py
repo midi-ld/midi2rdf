@@ -25,10 +25,12 @@ def rdf2midi(input_filename, output_filename):
 
     # Retrieve the tracks
     for s,p,o in sorted(g.triples((None, RDF.type, mid.Track))):
+        # print 'processing track {}'.format(s)
         track = midi.Track()
         pattern.append(track)
         # Retrieve all events on this track
         for x,y,z in sorted(g.triples((s, mid.hasEvent, None))):
+            # print 'processing event {}'.format(z)
             event_type = g.value(subject=z, predicate=RDF.type)
             if event_type == mid.NoteOnEvent:
                 tick = None

@@ -20,8 +20,10 @@ g.bind('mid', mid)
 for x in range( 0, pygame.midi.get_count() ):
     print pygame.midi.get_device_info(x)
 
+print pygame.midi.Input
+
 # open a specific midi device
-inp = pygame.midi.Input(0)
+inp = pygame.midi.Input(1)
 
 # run the event loop
 while True:
