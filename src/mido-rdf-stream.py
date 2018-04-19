@@ -8,6 +8,13 @@ from rdflib import Graph, Namespace, RDF, Literal, URIRef
 from datetime import datetime
 import time
 
+
+def output_graph(g):
+    '''
+    Prints an rdflib.Graph in n3 syntax to stdout
+    '''
+    print g.serialize(format='nt')
+
 # initialize rdf graph
 g = Graph()
 # Namespaces
@@ -30,7 +37,7 @@ start_time = time.time()
 # Initialize the MIDI graph
 piece = midi_r['pattern/' + str(pattern_id)]
 g.add((piece, RDF.type, midi.Piece))
-g.add((piece, midi.resolution, Literal(256)))
+g.add((piece, midi.resolution, Literal(460)))
 g.add((piece, midi['format'], Literal(1)))
 
 # We'll set a single track (TODO: support more)
@@ -98,11 +105,12 @@ g.add((activity, prov.wasAssociatedWith, agent))
 g.add((activity, prov.startedAtTime, Literal(datetime.now())))
 g.add((activity, prov.used, entity_o))
 
-print "Play along, then hit Ctrl-C :-)"
+output_graph(g)
 
 try:
     with mido.open_input(u'VMini:VMini MIDI 1 20:0') as port:
         for msg in port:
+            sg = Graph()
             status = None
             if msg.type == "note_on":
                 status = "NoteOnEvent"
@@ -116,28 +124,38 @@ try:
             #print status, pitch, velocity, channel, timestamp
             # Creating triples!
             event_uri = midi_r["pattern/" + str(pattern_id) + "/" + 'track' + str(track_id).zfill(2) + '/event' + str(event_id).zfill(4)]
-            g.add((track, midi.hasEvent, event_uri))
-            g.add((event_uri, RDF.type, midi[status]))
-            g.add((event_uri, midi.tick, Literal(int((time.time() - start_time)*1000))))
+            sg.add((track, midi.hasEvent, event_uri))
+            sg.add((event_uri, RDF.type, midi[status]))
+            sg.add((event_uri, midi.tick, Literal(int((time.time() - start_time)*1000))))
             start_time = time.time()
-            g.add((event_uri, midi.channel, Literal(channel)))
-            g.add((event_uri, midi.note, URIRef('http://purl.org/midi-ld/notes/{}'.format(pitch))))
-            g.add((event_uri, midi.velocity, Literal(velocity)))
-            for s,p,o in g.triples((None, None, None)):
-                print s,p,o
-                #print g.qname(s),g.qname(p),o,'.'
+            sg.add((event_uri, midi.channel, Literal(channel)))
+            sg.add((event_uri, midi.note, URIRef('http://purl.org/midi-ld/notes/{}'.format(pitch))))
+            sg.add((event_uri, midi.velocity, Literal(velocity)))
+
+            output_graph(sg)
+
+            # Merge sg with main graph
+            g = g + sg
+
             event_id += 1
 except KeyboardInterrupt:
     # Add end of track event
     event_id += 1
     event_uri = midi_r["pattern/" + str(pattern_id) + "/" + 'track' + str(track_id).zfill(2) + '/event' + str(event_id).zfill(4)]
-    g.add((track, midi.hasEvent, event_uri))
-    g.add((event_uri, RDF.type, midi.EndOfTrackEvent))
-    g.add((event_uri, midi.tick, Literal(0)))
+    eg = Graph()
+    eg.add((track, midi.hasEvent, event_uri))
+    eg.add((event_uri, RDF.type, midi.EndOfTrackEvent))
+    eg.add((event_uri, midi.tick, Literal(0)))
 
-    print "Here is your RDF graph!"
-    print len(g)
-    for s,p,o in g.triples((None, None, None)):
-        print s,p,o
-    with open('out.ttl', 'w') as outfile:
-        outfile.write(g.serialize(format='turtle'))
+    output_graph(eg)
+
+    g = g + eg
+
+    exit(0)
+
+    # print "Here is your RDF graph!"
+    # print len(g)
+    # for s,p,o in g.triples((None, None, None)):
+    #     print s,p,o
+    # with open('out.ttl', 'w') as outfile:
+    #     outfile.write(g.serialize(format='turtle'))
