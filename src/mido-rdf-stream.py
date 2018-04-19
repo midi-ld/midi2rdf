@@ -7,13 +7,7 @@ import uuid
 from rdflib import Graph, Namespace, RDF, Literal, URIRef
 from datetime import datetime
 import time
-
-
-def output_graph(g):
-    '''
-    Prints an rdflib.Graph in n3 syntax to stdout
-    '''
-    print g.serialize(format='nt')
+import sys
 
 # initialize rdf graph
 g = Graph()
@@ -105,7 +99,7 @@ g.add((activity, prov.wasAssociatedWith, agent))
 g.add((activity, prov.startedAtTime, Literal(datetime.now())))
 g.add((activity, prov.used, entity_o))
 
-output_graph(g)
+print g.serialize(format='nt')
 
 try:
     with mido.open_input(u'VMini:VMini MIDI 1 20:0') as port:
@@ -132,7 +126,7 @@ try:
             sg.add((event_uri, midi.note, URIRef('http://purl.org/midi-ld/notes/{}'.format(pitch))))
             sg.add((event_uri, midi.velocity, Literal(velocity)))
 
-            output_graph(sg)
+            print sg.serialize(format='nt')
 
             # Merge sg with main graph
             g = g + sg
@@ -147,9 +141,12 @@ except KeyboardInterrupt:
     eg.add((event_uri, RDF.type, midi.EndOfTrackEvent))
     eg.add((event_uri, midi.tick, Literal(0)))
 
-    output_graph(eg)
+    print eg.serialize(format='nt')
 
     g = g + eg
+
+    sys.stderr.write(piece)
+    sys.stderr.write('\n')
 
     exit(0)
 
