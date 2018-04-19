@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import midi
 import rdflib
 from rdflib import Namespace, Graph, RDF, RDFS, URIRef, Literal, util
