@@ -2,7 +2,8 @@
 
 import midi
 import rdflib
-from rdflib import Namespace, ConjunctiveGraph, RDF, RDFS, URIRef, Literal
+from rdflib import Namespace, ConjunctiveGraph, RDF, RDFS, URIRef, Literal, BNode, Graph
+from rdflib.collection import Collection
 import sys
 from werkzeug.urls import url_fix
 import hashlib
@@ -73,16 +74,19 @@ def midi2rdf(filename, ser_format):
     m21stream = music21.converter.parse(filename)
     key = m21stream.analyze('key')
     g.add((piece, mid.key, Literal(key)))
-
+    tracks = []
     for n_track in range(len(pattern_midi)):
         track = URIRef(piece + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
+        tracks.append(track)
         g.add((track, RDF.type, mid.Track))
-        g.add((piece, mid.hasTrack, track))
+        # g.add((piece, mid.hasTrack, track))
+        events = []
         for n_event in range(len(pattern_midi[n_track])):
             event_midi = pattern_midi[n_track][n_event]
             event = URIRef(piece + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
+            events.append(event)
             g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
-            g.add((track, mid.hasEvent, event))
+            # g.add((track, mid.hasEvent, event))
             # Save the 'tick' slot (shared among all events)
             g.add((event, mid.tick, Literal(event_midi.tick)))
             # Save the 'channel' slot
@@ -111,6 +115,17 @@ def midi2rdf(filename, ser_format):
                     g.add((event, mid['program'], mid_prog[program]))
                 else:
                     g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
+
+        # Add events to an rdf:List to keep their order
+        # Watch the new term mid.hasEvents -- in plural
+        event_list = BNode()
+        c = Collection(g, event_list, events)
+        g.add((track, mid.hasEvents, event_list))
+    # Add tracks to an rdf:List to keep their order
+    # Watch the new term mid.hasTracks -- in plural
+    track_list = BNode()
+    c = Collection(g, track_list, tracks)
+    g.add((piece, mid.hasTracks, track_list))
 
     # Add the global lyrics link, if lyrics not empty
     if lyrics_label:
