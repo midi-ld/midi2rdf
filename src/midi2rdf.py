@@ -2,17 +2,20 @@
 
 import midi
 import rdflib
-from rdflib import Namespace, ConjunctiveGraph, RDF, RDFS, URIRef, Literal
+from rdflib import Namespace, ConjunctiveGraph, RDF, RDFS, URIRef, Literal, BNode, Graph
+from rdflib.collection import Collection
 import sys
 from werkzeug.urls import url_fix
 import hashlib
 import ast
 import gzip
 from datetime import datetime
+import argparse
+
 import music21
 music21.environment.UserSettings()['warnings'] = 0
 
-def midi2rdf(filename, ser_format):
+def midi2rdf(filename, ser_format='turtle', order='uri'):
     """
     Returns a text/turtle dump of the input MIDI filename
     """
@@ -73,18 +76,43 @@ def midi2rdf(filename, ser_format):
     m21stream = music21.converter.parse(filename)
     key = m21stream.analyze('key')
     g.add((piece, mid.key, Literal(key)))
-
+    tracks = []
     for n_track in range(len(pattern_midi)):
         track = URIRef(piece + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
+        tracks.append(track)
         g.add((track, RDF.type, mid.Track))
-        g.add((piece, mid.hasTrack, track))
+        if order in ['uri', 'prop_number', 'prop_time']:
+            g.add((piece, mid.hasTrack, track))
+        elif order in ['list']:
+            g.add((piece, RDF.type, RDF.List))
+        elif order in ['seq']:
+            g.add((piece, RDF.type, RDF.Seq))
+        elif order in ['sop']:
+            print("WARNING: sop ordering not implemented yet")
+        else:
+            print("ERROR: {} is an unsupported order strategy".format(order))
+        events = []
+        absoluteTick = 0
         for n_event in range(len(pattern_midi[n_track])):
             event_midi = pattern_midi[n_track][n_event]
             event = URIRef(piece + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
+            events.append(event)
             g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
-            g.add((track, mid.hasEvent, event))
+            if order in ['uri', 'prop_number', 'prop_time']:
+                g.add((track, mid.hasEvent, event))
+            elif order in ['list']:
+                g.add((track, RDF.type, RDF.List))
+            elif order in ['seq']:
+                g.add((track, RDF.type, RDF.Seq))
+            elif order in ['sop']:
+                print("WARNING: sop ordering not implemented yet")
+            else:
+                print("ERROR: {} is an unsupported order strategy".format(order))
+            absoluteTick += int(event_midi.tick)
             # Save the 'tick' slot (shared among all events)
             g.add((event, mid.tick, Literal(event_midi.tick)))
+            if order in ['prop_number']:
+                g.add((event, mid.absoluteTick, Literal(absoluteTick)))
             # Save the 'channel' slot
             if hasattr(event_midi, 'channel'):
                 g.add((event, mid.channel, Literal(event_midi.channel)))
@@ -112,6 +140,31 @@ def midi2rdf(filename, ser_format):
                 else:
                     g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
 
+        if order in ['list']:
+            # Add events to an rdf:List to keep their order
+            # Watch the new term mid.hasEvents -- in plural
+            event_list = BNode()
+            c = Collection(g, event_list, events)
+            g.add((track, mid.hasEvents, event_list))
+        elif order in ['seq']:
+            # Add events to an rdf:Seq to keep their ordering
+            event_list = BNode()
+            for i in range(1, len(events)+1):
+                g.add((event_list, URIRef(str(RDF) + '_{}'.format(i)), events[i-1]))
+            g.add((track, mid.hasEvents, event_list))
+    if order in ['list']:
+        # Add tracks to an rdf:List to keep their order
+        # Watch the new term mid.hasTracks -- in plural
+        track_list = BNode()
+        c = Collection(g, track_list, tracks)
+        g.add((piece, mid.hasTracks, track_list))
+    elif order in ['seq']:
+        # Add tracks to an rdf:Seq to keep their order
+        track_list = BNode()
+        for i in range(1, len(tracks)+1):
+            g.add((track_list, URIRef(str(RDF) + '_{}'.format(i)), tracks[i-1]))
+        g.add((piece, mid.hasTracks, track_list))
+
     # Add the global lyrics link, if lyrics not empty
     if lyrics_label:
     	g.add((piece, mid['lyrics'], Literal(lyrics_label)))
@@ -130,22 +183,25 @@ def midi2rdf(filename, ser_format):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(prog='midi2rdf', description="MIDI to RDF converter")
+    parser.add_argument('filename', nargs=1, type=str, help="Path to the MIDI file to convert")
+    parser.add_argument('--format', '-f', dest='format', nargs='?', choices=['xml', 'n3', 'turtle', 'nt', 'pretty-xml', 'trix', 'trig', 'nquads'], default='turtle', help="RDF serialization format")
+    parser.add_argument('outfile', nargs='?', type=str, default=None, help="Output RDF file (if omitted defaults to stdout)")
+    parser.add_argument( '--gz', '-z', dest='gz', action='store_true', default=False, help="Compress the output of the conversion")
+    parser.add_argument('--order', '-o', dest='order', nargs='?', choices=['uri', 'prop_number', 'prop_time', 'seq', 'list', 'sop'], default='uri', help="Track and event ordering strategy")
+    parser.add_argument('--version', '-v', dest='version', action='version', version='0.2')
+    args = parser.parse_args()
 
-    if len(sys.argv) < 4:
-        print "Usage: {0} <midi input file> -f nquads|turtle|... [<rdf output file> [--gz]]".format(sys.argv[0])
-        exit(2)
+    dump = midi2rdf(args.filename[0], args.format, args.order)
 
-    filename = sys.argv[1]
-    dump = midi2rdf(filename, sys.argv[3])
-
-    if len(sys.argv) > 4:
-        if '--gz' in sys.argv:
-            with gzip.open(sys.argv[4], 'wb') as outfile:
-                outfile.write(dump)
+    if args.outfile:
+        if args.gz:
+            with gzip.open(args.outfile, 'wb') as out:
+                out.write(dump)
         else:
-            with open(sys.argv[4], 'w') as outfile:
-                outfile.write(dump)
+            with open(args.outfile, 'w') as out:
+                out.write(dump)
     else:
-        print dump
+        print(dump)
 
     exit(0)
