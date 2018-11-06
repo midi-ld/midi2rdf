@@ -31,11 +31,13 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
     mid_note_uri = URIRef("http://purl.org/midi-ld/notes/")
     mid_prog_uri = URIRef("http://purl.org/midi-ld/programs/")
     m_uri = URIRef(url_fix("http://purl.org/midi-ld/piece/"))
+    sequence_uri = URIRef("http://www.ontologydesignpatterns.org/cp/owl/sequence.owl#")
     mid = Namespace(mid_uri)
     prov = Namespace(prov_uri)
     mid_note = Namespace(mid_note_uri)
     mid_prog = Namespace(mid_prog_uri)
     m = Namespace(m_uri)
+    sequence = Namespace(sequence_uri)
 
     # Create the graph
     g = ConjunctiveGraph(identifier=m_uri)
@@ -81,14 +83,12 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
         track = URIRef(piece + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
         tracks.append(track)
         g.add((track, RDF.type, mid.Track))
-        if order in ['uri', 'prop_number', 'prop_time']:
+        if order in ['uri', 'prop_number', 'prop_time', 'sop']:
             g.add((piece, mid.hasTrack, track))
         elif order in ['list']:
             g.add((piece, RDF.type, RDF.List))
         elif order in ['seq']:
             g.add((piece, RDF.type, RDF.Seq))
-        elif order in ['sop']:
-            print("WARNING: sop ordering not implemented yet")
         else:
             print("ERROR: {} is an unsupported order strategy".format(order))
         events = []
@@ -98,14 +98,12 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
             event = URIRef(piece + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
             events.append(event)
             g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
-            if order in ['uri', 'prop_number', 'prop_time']:
+            if order in ['uri', 'prop_number', 'prop_time', 'sop']:
                 g.add((track, mid.hasEvent, event))
             elif order in ['list']:
                 g.add((track, RDF.type, RDF.List))
             elif order in ['seq']:
                 g.add((track, RDF.type, RDF.Seq))
-            elif order in ['sop']:
-                print("WARNING: sop ordering not implemented yet")
             else:
                 print("ERROR: {} is an unsupported order strategy".format(order))
             absoluteTick += int(event_midi.tick)
@@ -152,6 +150,13 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
             for i in range(1, len(events)+1):
                 g.add((event_list, URIRef(str(RDF) + '_{}'.format(i)), events[i-1]))
             g.add((track, mid.hasEvents, event_list))
+        elif order in ['sop']:
+            # Link events with the sequence ontology design pattern
+            for i in range(len(events)):
+                if i > 0:
+                    g.add((events[i], sequence['follows'], events[i-1]))
+                if i < len(events)-1:
+                    g.add((events[i], sequence['precedes'], events[i+1]))
     if order in ['list']:
         # Add tracks to an rdf:List to keep their order
         # Watch the new term mid.hasTracks -- in plural
@@ -164,6 +169,12 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
         for i in range(1, len(tracks)+1):
             g.add((track_list, URIRef(str(RDF) + '_{}'.format(i)), tracks[i-1]))
         g.add((piece, mid.hasTracks, track_list))
+    elif order in ['sop']:
+        for i in range(len(tracks)):
+            if i > 0:
+                g.add((tracks[i], sequence['follows'], tracks[i-1]))
+            if i < len(events)-1:
+                g.add((tracks[i], sequence['precedes'], tracks[i+1]))
 
     # Add the global lyrics link, if lyrics not empty
     if lyrics_label:
@@ -173,6 +184,7 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
     g.bind('midi-note', mid_note)
     g.bind('midi-prog', mid_prog)
     g.bind('prov', prov)
+    g.bind('sequence', sequence)
 
     # Finished -- record PROV end times
     end_time = Literal(datetime.now())
