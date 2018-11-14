@@ -15,6 +15,9 @@ import argparse
 import music21
 music21.environment.UserSettings()['warnings'] = 0
 
+import mido
+from mido import tick2second
+
 def midi2rdf(filename, ser_format='turtle', order='uri'):
     """
     Returns a text/turtle dump of the input MIDI filename
@@ -78,103 +81,127 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
     m21stream = music21.converter.parse(filename)
     key = m21stream.analyze('key')
     g.add((piece, mid.key, Literal(key)))
-    tracks = []
-    for n_track in range(len(pattern_midi)):
-        track = URIRef(piece + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
-        tracks.append(track)
-        g.add((track, RDF.type, mid.Track))
-        if order in ['uri', 'prop_number', 'prop_time', 'sop']:
+
+    # Begin processing of tracks and events
+
+    # We'll use mido for the case of timestampting -- unsupoprted in python-midi
+    tempo = 500000
+    if order in ['prop_time']:
+        midifile = mido.MidiFile(filename)
+        for i,tr in enumerate(midifile.tracks):
+            track = URIRef(piece + '/track' + str(i).zfill(2))
             g.add((piece, mid.hasTrack, track))
-        elif order in ['list']:
-            g.add((piece, RDF.type, RDF.List))
-        elif order in ['seq']:
-            g.add((piece, RDF.type, RDF.Seq))
-        else:
-            print("ERROR: {} is an unsupported order strategy".format(order))
-        events = []
-        absoluteTick = 0
-        for n_event in range(len(pattern_midi[n_track])):
-            event_midi = pattern_midi[n_track][n_event]
-            event = URIRef(piece + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
-            events.append(event)
-            g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
-            if order in ['uri', 'prop_number', 'prop_time', 'sop']:
+            g.add((track, RDF.type, mid.Track))
+            abs_time = .0
+            for j,msg in enumerate(tr):
+                event = URIRef(piece + '/track' + str(i).zfill(2) + '/event'+ str(j).zfill(4))
+                if msg.type == 'set_tempo':
+                    tempo = msg.tempo
                 g.add((track, mid.hasEvent, event))
+                g.add((event, RDF.type, mid[msg.type]))
+                rel_time = tick2second(msg.time, midifile.ticks_per_beat, tempo)
+                abs_time += rel_time
+                g.add((event, mid.relativeTime, Literal(rel_time)))
+                g.add((event, mid.absoluteTime, Literal(abs_time)))
+    else:
+        # For the rest -- use python-midi
+        tracks = []
+        for n_track in range(len(pattern_midi)):
+            track = URIRef(piece + '/track' + str(n_track).zfill(2)) #So we can order by URI later -- UGLY PATCH
+            tracks.append(track)
+            g.add((track, RDF.type, mid.Track))
+            if order in ['uri', 'prop_number', 'prop_time', 'sop']:
+                g.add((piece, mid.hasTrack, track))
             elif order in ['list']:
-                g.add((track, RDF.type, RDF.List))
+                g.add((piece, RDF.type, RDF.List))
             elif order in ['seq']:
-                g.add((track, RDF.type, RDF.Seq))
+                g.add((piece, RDF.type, RDF.Seq))
             else:
                 print("ERROR: {} is an unsupported order strategy".format(order))
-            absoluteTick += int(event_midi.tick)
-            # Save the 'tick' slot (shared among all events)
-            g.add((event, mid.tick, Literal(event_midi.tick)))
-            if order in ['prop_number']:
-                g.add((event, mid.absoluteTick, Literal(absoluteTick)))
-            # Save the 'channel' slot
-            if hasattr(event_midi, 'channel'):
-                g.add((event, mid.channel, Literal(event_midi.channel)))
-            # Save any other slots the event may have
-            for slot in event_midi.__slots__:
-                # Prcoess ASCII conversion of text events
-                if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent', 'LyricsEvent', 'CopyrightMetaEvent', 'MarkerEvent'] and slot == 'data':
-                    text_data_literal = getattr(event_midi, slot)
-                    text_value = unicode(''.join(chr(i) for i in text_data_literal), errors='replace')
-                    # print text_value
-                    # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
-                    g.add((event, RDFS.label, Literal(text_value)))
-                    if type(event_midi).__name__ == 'LyricsEvent':
-            			lyrics_label += text_value
-                elif type(event_midi).__name__ in ['NoteOnEvent', 'NoteOffEvent'] and slot == 'pitch':
-                    pitch = str(getattr(event_midi, slot))
-                    c = music21.pitch.Pitch()
-                    c.midi = int(pitch)
-                    scale_degree = key.getScaleDegreeFromPitch(c.name)
-                    g.add((event, mid['note'], mid_note[pitch]))
-                    g.add((event, mid['scaleDegree'], Literal(scale_degree)))
-                elif type(event_midi).__name__ in ['ProgramChangeEvent'] and slot == 'value':
-                    program = str(getattr(event_midi, slot))
-                    g.add((event, mid['program'], mid_prog[program]))
+            events = []
+            absoluteTick = 0
+            for n_event in range(len(pattern_midi[n_track])):
+                event_midi = pattern_midi[n_track][n_event]
+                event = URIRef(piece + '/track' + str(n_track).zfill(2) + '/event'+ str(n_event).zfill(4))
+                events.append(event)
+                g.add((event, RDF.type, mid[(type(event_midi).__name__)]))
+                if order in ['uri', 'prop_number', 'prop_time', 'sop']:
+                    g.add((track, mid.hasEvent, event))
+                elif order in ['list']:
+                    g.add((track, RDF.type, RDF.List))
+                elif order in ['seq']:
+                    g.add((track, RDF.type, RDF.Seq))
                 else:
-                    g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
+                    print("ERROR: {} is an unsupported order strategy".format(order))
+                absoluteTick += int(event_midi.tick)
+                # Save the 'tick' slot (shared among all events)
+                g.add((event, mid.tick, Literal(event_midi.tick)))
+                if order in ['prop_number']:
+                    g.add((event, mid.absoluteTick, Literal(absoluteTick)))
+                # Save the 'channel' slot
+                if hasattr(event_midi, 'channel'):
+                    g.add((event, mid.channel, Literal(event_midi.channel)))
+                # Save any other slots the event may have
+                for slot in event_midi.__slots__:
+                    # Prcoess ASCII conversion of text events
+                    if type(event_midi).__name__ in ['TrackNameEvent', 'TextMetaEvent', 'LyricsEvent', 'CopyrightMetaEvent', 'MarkerEvent'] and slot == 'data':
+                        text_data_literal = getattr(event_midi, slot)
+                        text_value = unicode(''.join(chr(i) for i in text_data_literal), errors='replace')
+                        # print text_value
+                        # text_value = ''.join(chr(i) for i in ast.literal_eval(text_data_literal))
+                        g.add((event, RDFS.label, Literal(text_value)))
+                        if type(event_midi).__name__ == 'LyricsEvent':
+                			lyrics_label += text_value
+                    elif type(event_midi).__name__ in ['NoteOnEvent', 'NoteOffEvent'] and slot == 'pitch':
+                        pitch = str(getattr(event_midi, slot))
+                        c = music21.pitch.Pitch()
+                        c.midi = int(pitch)
+                        scale_degree = key.getScaleDegreeFromPitch(c.name)
+                        g.add((event, mid['note'], mid_note[pitch]))
+                        g.add((event, mid['scaleDegree'], Literal(scale_degree)))
+                    elif type(event_midi).__name__ in ['ProgramChangeEvent'] and slot == 'value':
+                        program = str(getattr(event_midi, slot))
+                        g.add((event, mid['program'], mid_prog[program]))
+                    else:
+                        g.add((event, mid[slot], Literal(getattr(event_midi, slot))))
 
+            if order in ['list']:
+                # Add events to an rdf:List to keep their order
+                # Watch the new term mid.hasEvents -- in plural
+                event_list = BNode()
+                c = Collection(g, event_list, events)
+                g.add((track, mid.hasEvents, event_list))
+            elif order in ['seq']:
+                # Add events to an rdf:Seq to keep their ordering
+                event_list = BNode()
+                for i in range(1, len(events)+1):
+                    g.add((event_list, URIRef(str(RDF) + '_{}'.format(i)), events[i-1]))
+                g.add((track, mid.hasEvents, event_list))
+            elif order in ['sop']:
+                # Link events with the sequence ontology design pattern
+                for i in range(len(events)):
+                    if i > 0:
+                        g.add((events[i], sequence['follows'], events[i-1]))
+                    if i < len(events)-1:
+                        g.add((events[i], sequence['precedes'], events[i+1]))
         if order in ['list']:
-            # Add events to an rdf:List to keep their order
-            # Watch the new term mid.hasEvents -- in plural
-            event_list = BNode()
-            c = Collection(g, event_list, events)
-            g.add((track, mid.hasEvents, event_list))
+            # Add tracks to an rdf:List to keep their order
+            # Watch the new term mid.hasTracks -- in plural
+            track_list = BNode()
+            c = Collection(g, track_list, tracks)
+            g.add((piece, mid.hasTracks, track_list))
         elif order in ['seq']:
-            # Add events to an rdf:Seq to keep their ordering
-            event_list = BNode()
-            for i in range(1, len(events)+1):
-                g.add((event_list, URIRef(str(RDF) + '_{}'.format(i)), events[i-1]))
-            g.add((track, mid.hasEvents, event_list))
+            # Add tracks to an rdf:Seq to keep their order
+            track_list = BNode()
+            for i in range(1, len(tracks)+1):
+                g.add((track_list, URIRef(str(RDF) + '_{}'.format(i)), tracks[i-1]))
+            g.add((piece, mid.hasTracks, track_list))
         elif order in ['sop']:
-            # Link events with the sequence ontology design pattern
-            for i in range(len(events)):
+            for i in range(len(tracks)):
                 if i > 0:
-                    g.add((events[i], sequence['follows'], events[i-1]))
+                    g.add((tracks[i], sequence['follows'], tracks[i-1]))
                 if i < len(events)-1:
-                    g.add((events[i], sequence['precedes'], events[i+1]))
-    if order in ['list']:
-        # Add tracks to an rdf:List to keep their order
-        # Watch the new term mid.hasTracks -- in plural
-        track_list = BNode()
-        c = Collection(g, track_list, tracks)
-        g.add((piece, mid.hasTracks, track_list))
-    elif order in ['seq']:
-        # Add tracks to an rdf:Seq to keep their order
-        track_list = BNode()
-        for i in range(1, len(tracks)+1):
-            g.add((track_list, URIRef(str(RDF) + '_{}'.format(i)), tracks[i-1]))
-        g.add((piece, mid.hasTracks, track_list))
-    elif order in ['sop']:
-        for i in range(len(tracks)):
-            if i > 0:
-                g.add((tracks[i], sequence['follows'], tracks[i-1]))
-            if i < len(events)-1:
-                g.add((tracks[i], sequence['precedes'], tracks[i+1]))
+                    g.add((tracks[i], sequence['precedes'], tracks[i+1]))
 
     # Add the global lyrics link, if lyrics not empty
     if lyrics_label:
