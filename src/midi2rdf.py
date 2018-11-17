@@ -12,8 +12,8 @@ import gzip
 from datetime import datetime
 import argparse
 
-import music21
-music21.environment.UserSettings()['warnings'] = 0
+#import music21
+#music21.environment.UserSettings()['warnings'] = 0
 
 import mido
 from mido import tick2second
@@ -78,9 +78,9 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
     lyrics_label = ""
 
     # Attach key to the piece
-    m21stream = music21.converter.parse(filename)
-    key = m21stream.analyze('key')
-    g.add((piece, mid.key, Literal(key)))
+    #m21stream = music21.converter.parse(filename)
+    #key = m21stream.analyze('key')
+    #g.add((piece, mid.key, Literal(key)))
 
     # Begin processing of tracks and events
 
@@ -154,11 +154,11 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
                 			lyrics_label += text_value
                     elif type(event_midi).__name__ in ['NoteOnEvent', 'NoteOffEvent'] and slot == 'pitch':
                         pitch = str(getattr(event_midi, slot))
-                        c = music21.pitch.Pitch()
-                        c.midi = int(pitch)
-                        scale_degree = key.getScaleDegreeFromPitch(c.name)
+                        #c = music21.pitch.Pitch()
+                        #c.midi = int(pitch)
+                        #scale_degree = key.getScaleDegreeFromPitch(c.name)
                         g.add((event, mid['note'], mid_note[pitch]))
-                        g.add((event, mid['scaleDegree'], Literal(scale_degree)))
+                        #g.add((event, mid['scaleDegree'], Literal(scale_degree)))
                     elif type(event_midi).__name__ in ['ProgramChangeEvent'] and slot == 'value':
                         program = str(getattr(event_midi, slot))
                         g.add((event, mid['program'], mid_prog[program]))
@@ -200,7 +200,7 @@ def midi2rdf(filename, ser_format='turtle', order='uri'):
             for i in range(len(tracks)):
                 if i > 0:
                     g.add((tracks[i], sequence['follows'], tracks[i-1]))
-                if i < len(events)-1:
+                if i < len(tracks)-1:
                     g.add((tracks[i], sequence['precedes'], tracks[i+1]))
 
     # Add the global lyrics link, if lyrics not empty
