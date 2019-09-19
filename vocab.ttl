@@ -72,8 +72,8 @@
               rdfs:range xsd:int .
 
 
-###  http://purl.org/midi-ld/midi#ocatve
-:ocatve rdf:type owl:DatatypeProperty ;
+###  http://purl.org/midi-ld/midi#octave
+:octave rdf:type owl:DatatypeProperty ;
         rdfs:domain :Note ;
         rdfs:range xsd:int .
 
